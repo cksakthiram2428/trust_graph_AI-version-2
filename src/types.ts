@@ -102,9 +102,24 @@ export interface AIAnalysisResult {
 }
 
 export interface User {
+  uid?: string;
   email: string;
   name: string;
   role: string;
+  photoURL?: string;
+  provider?: "google" | "github" | "microsoft" | "password";
+}
+
+export interface RealtimeUser {
+  id: string;
+  uid?: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  provider: "google" | "github" | "microsoft" | "password";
+  role: string;
+  lastLoginAt: string;
+  status: "online" | "active" | "offline";
 }
 
 export type ViewMode = "3D_SPACE" | "2D_TOPOLOGY" | "RISK_MATRIX";

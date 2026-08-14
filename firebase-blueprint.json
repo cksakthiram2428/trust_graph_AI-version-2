@@ -29,6 +29,23 @@
       },
       "required": ["name", "score", "risk"]
     },
+    "users": {
+      "title": "Platform Users",
+      "description": "Authenticated procurement directors, risk auditors, and enterprise admins",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "provider": { "type": "string", "enum": ["google", "microsoft", "github", "password"] },
+        "role": { "type": "string" },
+        "lastLoginAt": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "status": { "type": "string", "enum": ["online", "active", "offline"] }
+      },
+      "required": ["uid", "email"]
+    },
     "chat_messages": {
       "title": "Chat Messages",
       "description": "Multi-turn Gemini intelligence chat records with system instructions",

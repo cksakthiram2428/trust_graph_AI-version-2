@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --animate-aurora: aurora 60s linear infinite;
   @keyframes aurora {
@@ -27,6 +29,14 @@
 
 @layer base {
   :root {
+    --bg: #F8FAFC;
+    --ink: #0F172A;
+    --accent: #0284C7;
+    --surface: rgba(0, 0, 0, 0.03);
+    --border-subtle: rgba(0, 0, 0, 0.08);
+  }
+
+  .dark {
     --bg: #0A0A0C;
     --ink: #E2E8F0;
     --accent: #38BDF8;
@@ -39,8 +49,10 @@
     color: var(--ink);
     font-family: 'Space Grotesk', sans-serif;
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
+
 
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
