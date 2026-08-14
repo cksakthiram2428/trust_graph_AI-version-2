@@ -4,7 +4,14 @@
 
 TrustGraph AI is an intelligence and risk mitigation command engine built to protect Indian MSMEs (Micro, Small, and Medium Enterprises) against multi-tier supplier defaults, delayed payments under the MSMED Act 2006, operational insolvencies, and ripple shocks across critical manufacturing supply corridors.
 
+
 ---
+## 🛠️ Tech Stack
+
+- **Frontend**: React 18, TypeScript, Vite, Tailwind CSS v4, Motion, Lucide Icons, Three.js
+- **Backend**: Node.js, Express, Google Gen AI SDK (`@google/genai`)
+- **Database & Auth**: Firebase Auth (Google Provider & Email), Cloud Firestore
+- **Grounding & APIs**: Google Search Grounding, Google Maps Grounding, Web Speech API
 
 ## 📊 Data Credibility & Regulatory Compliance Disclosure
 
@@ -62,3 +69,28 @@ node backend/scripts/importMsmeData.js path/to/udyam_dataset.csv
 ```
 
 Or use the **Ingest Udyam CSV** button directly inside the **Supplier Grid** admin view.
+
+# 🌐 TrustGraph AI
+### 3D Immersive Supply Chain Knowledge Graph & Contagion Shockwave Simulator for MSMEs
+
+**TrustGraph AI** is an intelligent supply network resilience and risk command platform designed to shield Indian Micro, Small, and Medium Enterprises (MSMEs) from multi-tier vendor failures, working capital contractions, and payment defaults under the MSMED Act 2006.
+
+---
+
+## 🌟 Key Highlights
+
+- 🪐 **Interactive 3D Supply Chain Topology**: Concentric multi-tier orbit visualization (Tier-0 Hub to Tier-3 Raw Materials) built with **Three.js** and particle shockwaves.
+- ⚡ **Contagion Cascade Simulator**: Real-time monetary exposure calculations (in ₹ INR Lakhs/Crores), production downtime estimates, and automated MSME SAMADHAAN legal recovery pathways.
+- 🤖 **Multi-Model AI Copilot (Powered by Gemini)**:
+  - Dynamic switching between `gemini-3.5-flash`, `gemini-3.1-pro-preview`, and `gemini-3.1-flash-lite`.
+  - **Google Search Grounding** for real-time market indices, tariff changes, and raw material alerts.
+  - **Google Maps Grounding** for industrial cluster coordinates and port bottleneck verification.
+  - **High-Thinking Deep Reasoner** (`ThinkingLevel.HIGH`) for complex systemic insolvency analysis.
+  - **Vision Document Scanner** extracting GSTIN, invoice amounts, and compliance data from purchase orders and audit certificates.
+  - **Live Voice Interaction** with real-time speech recognition and text-to-speech audio readback.
+- 📊 **Real-World MSME Ingestion Pipeline**: Ingest and validate official government datasets (Udyam Registration / MCA21) from **data.gov.in** with automated GSTIN/Udyam regex validation.
+- 🔐 **Firebase Cloud Architecture**: Persistent Firestore database synchronization with Google Sign-In and role-based security rules.
+- 🌌 **Cybernetic Visuals**: Built with **Tailwind CSS v4** animated Aurora gradient meshes and Web Audio API sensory cues.
+
+---
+
