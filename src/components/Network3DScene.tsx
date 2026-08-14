@@ -36,10 +36,18 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   const [hoveredNode, setHoveredNode] = useState<NetworkNode | null>(null);
-  const [autoRotate, setAutoRotate] = useState<boolean>(true);
+  const [autoRotate, setAutoRotate] = useState<boolean>(false);
   const [filterTier, setFilterTier] = useState<string>("All");
   const [filterRisk, setFilterRisk] = useState<string>("All");
   const [showHelper, setShowHelper] = useState<boolean>(false);
+  const [rotationTelemetry, setRotationTelemetry] = useState<string>("[0.44, 0.92, -0.01]");
+
+  const [sceneReady, setSceneReady] = useState<boolean>(false);
+
+  const autoRotateRef = useRef<boolean>(false);
+  useEffect(() => {
+    autoRotateRef.current = autoRotate;
+  }, [autoRotate]);
 
   // References to keep Three.js state across re-renders
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -202,7 +210,7 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
       const elapsedTime = clock.getElapsedTime();
 
       // Auto rotation when idle
-      if (autoRotate && !isInteractingRef.current) {
+      if (autoRotateRef.current && !isInteractingRef.current) {
         spherical.theta += 0.0025;
       }
 
@@ -530,24 +538,6 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
             <option value="High">High / Critical</option>
           </select>
         </div>
-
-        {/* Auto Rotate Toggle */}
-        <button
-          id="toggle-auto-rotate-btn"
-          onClick={() => {
-            sound.playClick();
-            setAutoRotate(!autoRotate);
-          }}
-          className={`p-2 rounded-lg backdrop-blur-md border transition-all text-xs flex items-center gap-1.5 ${
-            autoRotate
-              ? "bg-cyan-500/20 border-cyan-400/50 text-cyan-300"
-              : "bg-slate-900/80 border-slate-700 text-slate-400 hover:text-slate-200"
-          }`}
-          title="Toggle Auto-Orbit"
-        >
-          <RotateCw className={`w-3.5 h-3.5 ${autoRotate ? "animate-spin" : ""}`} style={{ animationDuration: "8s" }} />
-          <span className="hidden sm:inline font-mono">Orbit</span>
-        </button>
 
         {/* Quick Help Guide Button */}
         <button
