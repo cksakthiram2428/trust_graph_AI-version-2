@@ -2,11 +2,17 @@
 
 **Enterprise-Grade 3D Immersive Supply Chain Knowledge Graph & Contagion Shockwave Simulation Platform for Indian MSMEs**
 
+![3D Knowledge Graph](./src/assets/images/3d_knowledge_graph_1786725657513.jpg)
+*Figure 1: Immersive 3D Spatial Knowledge Graph visualizing multi-tier supplier dependencies.*
+
 TrustGraph AI is an intelligence and risk mitigation command engine built to protect Indian MSMEs (Micro, Small, and Medium Enterprises) against multi-tier supplier defaults, delayed payments under the MSMED Act 2006, operational insolvencies, and ripple shocks across critical manufacturing supply corridors.
 
 ---
 
 ## 📊 Data Credibility & Regulatory Compliance Disclosure
+
+![Risk Dashboard](./src/assets/images/risk_dashboard_1786725673272.jpg)
+*Figure 2: Comprehensive Risk Dashboard showing Trust Scores and Payment Delay analytics.*
 
 To ensure complete regulatory integrity, legal compliance, and market credibility, TrustGraph AI strictly separates **Real-world Government Public Data** from **Algorithmically Simulated Operational Metrics**:
 
@@ -37,6 +43,9 @@ Because statutory registries (like Udyam and MCA) only maintain registration and
 ---
 
 ## 🚀 Key Features
+
+![Contagion Simulation](./src/assets/images/contagion_simulation_1786725690301.jpg)
+*Figure 3: Real-time Contagion Shockwave Simulation modeling systemic supply chain failures.*
 
 * **3D Multi-Tier Knowledge Graph**: Interactive Three.js concentric orbit topology visualizing Tier-0 MSME Hubs, Tier-1 Direct Partners, Tier-2 Component Fabricators, and Tier-3 Raw Material Suppliers.
 * **Contagion Shockwave Simulation**: Real-time propagation engine modeling production downtime days and monetary INR exposure.
