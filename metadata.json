@@ -1,0 +1,6 @@
+{
+  "name": "TrustGraph AI",
+  "description": "3D Immersive Supply Chain Knowledge Graph, Contagion Risk Simulator & AI Trust Radar for MSMEs",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

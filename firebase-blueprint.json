@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "suppliers": {
+      "title": "Suppliers",
+      "description": "Monitored supply chain entities with credit, logistics, and trust scores",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "industry": { "type": "string" },
+        "tier": { "type": "string" },
+        "score": { "type": "number" },
+        "risk": { "type": "string" },
+        "riskIcon": { "type": "string" },
+        "riskColor": { "type": "string" },
+        "insight": { "type": "string" },
+        "paymentDelay": { "type": "string" },
+        "deliveryReliability": { "type": "string" },
+        "qualityRate": { "type": "string" },
+        "complaintCount": { "type": "number" },
+        "criticality": { "type": "string" },
+        "leadTimeDays": { "type": "number" },
+        "monthlyVolumeINR": { "type": "string" },
+        "city": { "type": "string" },
+        "gstin": { "type": "string" },
+        "dependencies": { "type": "array", "items": { "type": "string" } },
+        "userId": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "score", "risk"]
+    },
+    "chat_messages": {
+      "title": "Chat Messages",
+      "description": "Multi-turn Gemini intelligence chat records with system instructions",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "role": { "type": "string" },
+        "content": { "type": "string" },
+        "model": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "groundingSources": { "type": "array" }
+      },
+      "required": ["role", "content", "timestamp"]
+    },
+    "simulation_logs": {
+      "title": "Simulation Logs",
+      "description": "High-thinking systemic contagion cascade shockwave results",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "supplierName": { "type": "string" },
+        "shockType": { "type": "string" },
+        "exposure": { "type": "string" },
+        "downtimeDays": { "type": "number" },
+        "narrative": { "type": "string" },
+        "deepThinkingAnalysis": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["supplierName", "shockType", "createdAt"]
+    }
+  }
+}

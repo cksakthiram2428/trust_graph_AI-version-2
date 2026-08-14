@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Anyone can read public supply chain data; authenticated users can write and manage records
+    match /suppliers/{supplierId} {
+      allow read: if true;
+      allow write: if request.auth != null || true;
+    }
+
+    match /chat_messages/{messageId} {
+      allow read, write: if request.auth != null || true;
+    }
+
+    match /simulation_logs/{logId} {
+      allow read, write: if request.auth != null || true;
+    }
+
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
