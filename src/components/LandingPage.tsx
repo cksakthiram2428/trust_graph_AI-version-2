@@ -27,15 +27,18 @@ import {
   TrendingDown,
   Building2,
   Scale,
-  LogIn
+  LogIn,
+  User as UserIcon
 } from "lucide-react";
-import { Supplier, PlatformStat } from "../types";
+import { Supplier, PlatformStat, User } from "../types";
 
 interface LandingPageProps {
   onEnterWorkspace: (initialView?: "3D_SPACE" | "2D_TOPOLOGY" | "RISK_MATRIX") => void;
   onOpenCopilot: () => void;
   onOpenCsvModal: () => void;
   onOpenLogin: () => void;
+  user: User | null;
+  onOpenProfile?: () => void;
   theme: "dark" | "light";
   onToggleTheme: () => void;
   isMuted: boolean;
@@ -49,6 +52,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onOpenCopilot,
   onOpenCsvModal,
   onOpenLogin,
+  user,
+  onOpenProfile,
   theme,
   onToggleTheme,
   isMuted,
@@ -61,8 +66,18 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     ? Math.round(suppliers.reduce((acc, s) => acc + s.score, 0) / suppliers.length) 
     : 78;
 
+  // Requirement: All buttons navigating to the hero/workspace section require login if not already done
+  const handleProtectedNavigate = (initialView?: "3D_SPACE" | "2D_TOPOLOGY" | "RISK_MATRIX") => {
+    sound.playClick();
+    if (!user) {
+      onOpenLogin();
+      return;
+    }
+    onEnterWorkspace(initialView);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#070709] text-slate-900 dark:text-slate-100 transition-colors duration-500 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#070709] text-slate-900 dark:text-slate-100 transition-colors duration-500 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200 relative">
       {/* Aurora Ambient Hero Container */}
       <AuroraBackground className="min-h-[85vh] md:min-h-[92vh] pt-6 pb-16 justify-between">
         {/* Landing Top Header */}
@@ -111,26 +126,51 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               {theme === "dark" ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
             </button>
 
-            {/* Header Login Button */}
-            <button
-              id="landing-login-btn"
-              onClick={() => {
-                sound.playClick();
-                onOpenLogin();
-              }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 text-xs font-mono transition-all cursor-pointer shadow-sm"
-            >
-              <LogIn className="w-3.5 h-3.5 text-sky-500" />
-              <span>Login</span>
-            </button>
+            {/* User Profile Trigger or Login Button */}
+            {user ? (
+              <button
+                id="landing-profile-btn"
+                onClick={() => {
+                  sound.playClick();
+                  onOpenProfile?.();
+                }}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/15 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 text-xs font-mono transition-all cursor-pointer shadow-sm"
+                title="Edit Operator Profile"
+              >
+                <div className="relative w-6 h-6 rounded-lg bg-gradient-to-br from-sky-500 to-indigo-600 p-0.5">
+                  {user.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt={user.name}
+                      referrerPolicy="no-referrer"
+                      className="w-full h-full object-cover rounded-[5px]"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-white dark:bg-[#0A0A0C] rounded-[5px] flex items-center justify-center text-sky-500 font-bold text-[10px]">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <span className="hidden sm:inline font-semibold">{user.name.split(" ")[0]}</span>
+              </button>
+            ) : (
+              <button
+                id="landing-login-btn"
+                onClick={() => {
+                  sound.playClick();
+                  onOpenLogin();
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/80 dark:bg-white/5 hover:bg-white dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 text-xs font-mono transition-all cursor-pointer shadow-sm font-semibold"
+              >
+                <LogIn className="w-3.5 h-3.5 text-sky-500" />
+                <span>Login</span>
+              </button>
+            )}
 
             {/* Primary Action Button */}
             <button
               id="landing-enter-workspace-header-btn"
-              onClick={() => {
-                sound.playClick();
-                onEnterWorkspace("3D_SPACE");
-              }}
+              onClick={() => handleProtectedNavigate("3D_SPACE")}
               className="hidden sm:flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-cyan-500/20 dark:hover:bg-cyan-500/30 text-white dark:text-cyan-300 border border-slate-800 dark:border-cyan-500/40 text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-md cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 text-cyan-400" />
@@ -176,29 +216,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             transition={{ duration: 0.8, delay: 0.3 }}
             className="mt-8 sm:mt-10 flex flex-wrap items-center justify-center gap-4 w-full"
           >
+            {/* Launch Button with Protected Auth Guard */}
             <button
               id="landing-main-cta-btn"
-              onClick={() => {
-                sound.playClick();
-                onEnterWorkspace("3D_SPACE");
-              }}
+              onClick={() => handleProtectedNavigate("3D_SPACE")}
               className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-mono font-bold text-sm tracking-wider uppercase flex items-center gap-2 shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/40 transition-all transform hover:-translate-y-0.5 cursor-pointer"
             >
               <Network className="w-4 h-4" />
               <span>Launch 3D Command Center</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button
-              id="landing-copilot-cta-btn"
-              onClick={() => {
-                sound.playClick();
-                onOpenCopilot();
-              }}
-              className="px-5 py-3.5 rounded-2xl bg-white/80 dark:bg-white/10 hover:bg-white dark:hover:bg-white/15 border border-slate-300 dark:border-white/20 text-slate-800 dark:text-slate-100 font-mono text-sm font-semibold flex items-center gap-2 backdrop-blur-md transition-all cursor-pointer shadow-sm"
-            >
-              <Bot className="w-4 h-4 text-sky-500 dark:text-cyan-400" />
-              <span>AI Risk Copilot</span>
             </button>
 
             <button
@@ -251,11 +277,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </p>
         </div>
 
-        {/* Feature Grid */}
+        {/* Feature Grid with Protected Auth Handlers */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Card 1: 3D Topology */}
           <div 
-            onClick={() => onEnterWorkspace("3D_SPACE")}
+            onClick={() => handleProtectedNavigate("3D_SPACE")}
             className="p-6 rounded-2xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-white/10 shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-sky-500 dark:hover:border-sky-400 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
           >
             <div className="space-y-4">
@@ -277,7 +303,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Card 2: Contagion Shockwave */}
           <div 
-            onClick={() => onEnterWorkspace("3D_SPACE")}
+            onClick={() => handleProtectedNavigate("3D_SPACE")}
             className="p-6 rounded-2xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-white/10 shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-rose-500 dark:hover:border-rose-400 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
           >
             <div className="space-y-4">
@@ -299,7 +325,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Card 3: Multi-Model Gemini AI */}
           <div 
-            onClick={onOpenCopilot}
+            onClick={() => {
+              sound.playClick();
+              onOpenCopilot();
+            }}
             className="p-6 rounded-2xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-white/10 shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-indigo-500 dark:hover:border-indigo-400 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
           >
             <div className="space-y-4">
@@ -321,7 +350,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Card 4: Udyam & MSMED Act */}
           <div 
-            onClick={onOpenCsvModal}
+            onClick={() => {
+              sound.playClick();
+              onOpenCsvModal();
+            }}
             className="p-6 rounded-2xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-white/10 shadow-lg shadow-slate-200/50 dark:shadow-none hover:border-emerald-500 dark:hover:border-emerald-400 transition-all duration-300 cursor-pointer group flex flex-col justify-between"
           >
             <div className="space-y-4">
@@ -356,28 +388,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button
-              onClick={() => {
-                sound.playClick();
-                onEnterWorkspace("3D_SPACE");
-              }}
+              onClick={() => handleProtectedNavigate("3D_SPACE")}
               className="px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-950 font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md cursor-pointer"
             >
               Enter 3D Graph
             </button>
             <button
-              onClick={() => {
-                sound.playClick();
-                onEnterWorkspace("2D_TOPOLOGY");
-              }}
+              onClick={() => handleProtectedNavigate("2D_TOPOLOGY")}
               className="px-5 py-3 rounded-xl bg-white dark:bg-white/10 hover:bg-slate-50 dark:hover:bg-white/20 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-semibold transition-all cursor-pointer"
             >
               2D Topological View
             </button>
             <button
-              onClick={() => {
-                sound.playClick();
-                onEnterWorkspace("RISK_MATRIX");
-              }}
+              onClick={() => handleProtectedNavigate("RISK_MATRIX")}
               className="px-5 py-3 rounded-xl bg-white dark:bg-white/10 hover:bg-slate-50 dark:hover:bg-white/20 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white font-mono text-xs font-semibold transition-all cursor-pointer"
             >
               Risk Matrix

@@ -95,25 +95,25 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
   return (
     <div
       id="csv-ingestion-modal"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#0A0A0C]/90 backdrop-blur-md animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in"
     >
-      <div className="relative w-full max-w-2xl rounded-3xl neural-card border border-cyan-500/30 shadow-2xl p-6 sm:p-8 bg-[#0A0A0C] max-h-[90vh] flex flex-col">
+      <div className="relative w-full max-w-2xl rounded-3xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-cyan-500/30 shadow-2xl p-6 sm:p-8 max-h-[90vh] flex flex-col text-slate-900 dark:text-slate-100 transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-white/10 shrink-0">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-white/10 shrink-0">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-[#38BDF8]/20 border border-[#38BDF8]/40 text-[#38BDF8]">
+            <div className="p-2.5 rounded-xl bg-sky-500/10 dark:bg-[#38BDF8]/20 border border-sky-500/30 dark:border-[#38BDF8]/40 text-sky-600 dark:text-[#38BDF8]">
               <Database className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono text-[#38BDF8] uppercase tracking-wider">
+                <span className="text-[10px] font-mono text-sky-600 dark:text-[#38BDF8] uppercase tracking-wider font-bold">
                   Public MSME Registry Ingestion
                 </span>
-                <span className="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[9px]">
+                <span className="px-1.5 py-0.5 rounded bg-emerald-500/10 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-mono text-[9px] font-bold">
                   data.gov.in / Udyam / MCA
                 </span>
               </div>
-              <h2 className="text-lg font-bold text-white font-display">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white font-display">
                 Ingest Real-World MSME Datasets
               </h2>
             </div>
@@ -121,7 +121,7 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
 
           <button
             onClick={() => { sound.playClick(); onClose(); }}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -130,8 +130,8 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
         {/* Scrollable Content */}
         <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1 text-xs">
           {/* Transparency & Regulatory Notice */}
-          <div className="p-3.5 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-200 leading-relaxed font-sans">
-            <div className="flex items-center gap-2 font-bold font-mono text-[11px] text-[#38BDF8] mb-1">
+          <div className="p-3.5 rounded-2xl bg-sky-50 dark:bg-cyan-950/40 border border-sky-200 dark:border-cyan-500/30 text-slate-700 dark:text-cyan-200 leading-relaxed font-sans shadow-xs">
+            <div className="flex items-center gap-2 font-bold font-mono text-[11px] text-sky-700 dark:text-[#38BDF8] mb-1">
               <ShieldCheck className="w-4 h-4" />
               <span>Data Source &amp; Compliance Transparency</span>
             </div>
@@ -145,9 +145,9 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-mono text-xs flex items-center gap-2 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 font-mono text-xs flex items-center gap-2 cursor-pointer transition-colors"
               >
-                <UploadCloud className="w-3.5 h-3.5 text-[#38BDF8]" />
+                <UploadCloud className="w-3.5 h-3.5 text-sky-600 dark:text-[#38BDF8]" />
                 <span>Choose CSV File</span>
               </button>
               <input
@@ -160,20 +160,20 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
 
               <button
                 onClick={handleLoadSample}
-                className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-mono text-xs cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-mono text-xs cursor-pointer transition-colors"
               >
                 Load data.gov.in Sample
               </button>
             </div>
 
-            <span className="text-[10px] font-mono text-slate-400">
-              Expected headers: enterprise_name, udyam_registration_number, district, state, gstin, nic_5_digit_code
+            <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400">
+              Headers: enterprise_name, udyam_registration_number, district, state, gstin
             </span>
           </div>
 
           {/* Textarea for CSV */}
           <div className="space-y-1">
-            <label className="block text-[11px] font-mono text-slate-300 uppercase">
+            <label className="block text-[11px] font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold">
               CSV Content or Raw Input:
             </label>
             <textarea
@@ -181,38 +181,38 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
               value={csvText}
               onChange={(e) => setCsvText(e.target.value)}
               placeholder="Paste comma-separated rows with headers here..."
-              className="w-full p-3 rounded-xl bg-[#0A0A0C] border border-white/10 font-mono text-xs text-slate-200 focus:outline-none focus:border-[#38BDF8] resize-none"
+              className="w-full p-3 rounded-xl bg-slate-50 dark:bg-[#0A0A0C] border border-slate-300 dark:border-white/10 font-mono text-xs text-slate-900 dark:text-slate-200 focus:outline-none focus:border-sky-500 dark:focus:border-[#38BDF8] resize-none"
             />
           </div>
 
           {/* Status Message */}
           {statusMessage && (
-            <div className={`p-3 rounded-xl text-xs font-mono ${statusMessage.includes("failed") ? "bg-rose-950/80 border border-rose-500/40 text-rose-200" : "bg-emerald-950/60 border border-emerald-500/40 text-emerald-200"}`}>
+            <div className={`p-3 rounded-xl text-xs font-mono font-semibold ${statusMessage.includes("failed") ? "bg-rose-50 dark:bg-rose-950/80 border border-rose-200 dark:border-rose-500/40 text-rose-700 dark:text-rose-200" : "bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-500/40 text-emerald-700 dark:text-emerald-200"}`}>
               {statusMessage}
             </div>
           )}
 
           {/* Validation Report */}
           {validationReport && (
-            <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 space-y-2">
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 space-y-2">
               <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-slate-400">Validation Breakdown:</span>
+                <span className="text-slate-600 dark:text-slate-400 font-semibold">Validation Breakdown:</span>
                 <div className="flex items-center gap-3">
-                  <span className="text-emerald-400 font-bold">
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">
                     ✓ {validationReport.validRows} Valid
                   </span>
-                  <span className={`${validationReport.invalidRows > 0 ? "text-rose-400" : "text-slate-500"} font-bold`}>
+                  <span className={`${validationReport.invalidRows > 0 ? "text-rose-600 dark:text-rose-400" : "text-slate-500"} font-bold`}>
                     ✕ {validationReport.invalidRows} Flagged
                   </span>
                 </div>
               </div>
 
               {validationReport.errors && validationReport.errors.length > 0 && (
-                <div className="mt-2 p-2.5 rounded-xl bg-rose-950/50 border border-rose-500/30 text-[11px] font-mono text-rose-200 max-h-28 overflow-y-auto space-y-1">
-                  <span className="font-bold block text-rose-300">Flagged Malformed Rows:</span>
+                <div className="mt-2 p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-500/30 text-[11px] font-mono text-rose-700 dark:text-rose-200 max-h-28 overflow-y-auto space-y-1">
+                  <span className="font-bold block text-rose-800 dark:text-rose-300">Flagged Malformed Rows:</span>
                   {validationReport.errors.map((err: any, idx: number) => (
                     <div key={idx} className="flex items-start gap-2">
-                      <AlertTriangle className="w-3.5 h-3.5 text-rose-400 shrink-0 mt-0.5" />
+                      <AlertTriangle className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" />
                       <span>Row {err.row}: {err.reason}</span>
                     </div>
                   ))}
@@ -223,10 +223,10 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3 shrink-0">
+        <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center justify-end gap-3 shrink-0">
           <button
             onClick={() => { sound.playClick(); onClose(); }}
-            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-mono text-xs cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-mono text-xs cursor-pointer transition-colors"
           >
             Cancel
           </button>
@@ -234,7 +234,7 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
           <button
             disabled={!csvText.trim() || isUploading}
             onClick={handleExecuteImport}
-            className="btn-cyber px-5 py-2 rounded-xl flex items-center gap-2 disabled:opacity-40"
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-bold font-mono text-xs flex items-center gap-2 cursor-pointer disabled:opacity-40 shadow-sm"
           >
             {isUploading ? (
               <>

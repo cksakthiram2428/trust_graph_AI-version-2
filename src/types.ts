@@ -108,6 +108,12 @@ export interface User {
   role: string;
   photoURL?: string;
   provider?: "google" | "github" | "microsoft" | "password";
+  phone?: string;
+  company?: string;
+  department?: string;
+  bio?: string;
+  emailAlerts?: boolean;
+  smsAlerts?: boolean;
 }
 
 export interface RealtimeUser {

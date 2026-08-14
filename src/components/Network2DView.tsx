@@ -32,7 +32,7 @@ export const Network2DView: React.FC<Network2DViewProps> = ({
   return (
     <div
       id="2d-topology-stage"
-      className="relative w-full h-[620px] rounded-2xl overflow-hidden cyber-glass border border-cyan-500/20 shadow-2xl flex items-center justify-center p-4 select-none"
+      className="relative w-full h-[620px] rounded-2xl overflow-hidden bg-slate-950 dark:bg-[#07070B] border border-slate-800 dark:border-cyan-500/20 shadow-2xl flex items-center justify-center p-4 select-none"
     >
       {/* Background Cyber Grid */}
       <div className="absolute inset-0 cyber-grid-bg opacity-30 pointer-events-none" />

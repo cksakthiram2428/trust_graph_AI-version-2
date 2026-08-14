@@ -16,6 +16,8 @@ import { AICopilotDrawer } from "./components/AICopilotDrawer";
 import { ResearchHub } from "./components/ResearchHub";
 import { LoginModal } from "./components/LoginModal";
 import { CsvIngestionModal } from "./components/CsvIngestionModal";
+import { UserProfileModal } from "./components/UserProfileModal";
+import { FloatingAIAgentButton } from "./components/FloatingAIAgentButton";
 import { sound } from "./utils/audio";
 import { auth, onAuthStateChanged, logOut, subscribeToRealtimeUsers, syncUserToFirestore } from "./lib/firebase";
 import { 
@@ -85,6 +87,7 @@ export default function App() {
     role: "Chief Procurement Officer"
   });
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
+  const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
 
   // Modals and Drawers
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
@@ -147,88 +150,44 @@ export default function App() {
       ]);
 
       if (suppliersRes.ok) {
-        const suppliersJson = await suppliersRes.json();
-        setSuppliers(suppliersJson);
+        const supData = await suppliersRes.json();
+        setSuppliers(supData);
       }
-
       if (statsRes.ok) {
-        const statsJson = await statsRes.json();
-        setStats(statsJson.stats || []);
-        if (statsJson.summary?.systemHealth) {
-          setSystemHealth(statsJson.summary.systemHealth);
-        }
+        const statsData = await statsRes.json();
+        setStats(statsData.stats || []);
+        if (statsData.systemHealth) setSystemHealth(statsData.systemHealth);
       }
-
       if (networkRes.ok) {
-        const networkJson = await networkRes.json();
-        setNetworkData(networkJson);
+        const netData = await networkRes.json();
+        setNetworkData(netData);
       }
     } catch (err) {
       console.error("Failed to load initial data", err);
-      showToast("Connected with local high-resilience cache", "info");
+      showToast("Operating in local cached model mode", "info");
     } finally {
       setLoading(false);
     }
   };
 
-  // Select Node from 3D/2D Graph
-  const handleSelectNode = (nodeKey: string) => {
-    setSelectedNodeKey(nodeKey);
-    if (nodeKey === "HUB") {
-      showToast("Focused Central MSME Enterprise Hub", "info");
-      return;
-    }
-    const matched = suppliers.find(s => s.id === nodeKey);
-    if (matched) {
-      setSelectedSupplier(matched);
+  // Navigation handlers
+  const handleEnterWorkspace = (initialView?: "3D_SPACE" | "2D_TOPOLOGY" | "RISK_MATRIX") => {
+    sound.playAISuccess();
+    if (initialView) setViewMode(initialView);
+    setPageMode("WORKSPACE");
+  };
+
+  const handleSelectNode = (nodeId: string) => {
+    sound.playTargetLock();
+    setSelectedNodeKey(nodeId);
+    const matchedSupplier = suppliers.find(s => s.id === nodeId);
+    if (matchedSupplier) {
+      setSelectedSupplier(matchedSupplier);
     }
   };
 
-  // Save Supplier (Create or Update)
-  const handleSaveSupplier = async (supplierData: Partial<Supplier>) => {
-    if (editingSupplier) {
-      // Update
-      const res = await fetch(`/api/suppliers/${editingSupplier.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(supplierData)
-      });
-      if (res.ok) {
-        showToast(`Updated ${supplierData.name || "supplier"}`, "success");
-        fetchInitialData();
-      }
-    } else {
-      // Create
-      const res = await fetch("/api/suppliers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(supplierData)
-      });
-      if (res.ok) {
-        showToast(`Registered new supplier ${supplierData.name}`, "success");
-        fetchInitialData();
-      }
-    }
-  };
-
-  // Delete Supplier
-  const handleDeleteSupplier = async (supplierId: string) => {
-    const s = suppliers.find(item => item.id === supplierId);
-    if (!confirm(`Are you sure you want to remove ${s?.name || "this supplier"} from monitored supply chain?`)) return;
-
-    try {
-      const res = await fetch(`/api/suppliers/${supplierId}`, { method: "DELETE" });
-      if (res.ok) {
-        showToast("Supplier removed from active chain", "info");
-        fetchInitialData();
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // Trigger Contagion Shockwave Simulation
   const handleOpenCascadeModal = (supplier: Supplier) => {
+    sound.playClick();
     setCascadeTargetSupplier(supplier);
     setIsCascadeModalOpen(true);
   };
@@ -236,16 +195,70 @@ export default function App() {
   const handleApplyShockTo3D = (result: CascadeShockResult) => {
     setActiveCascadeResult(result);
     setPageMode("WORKSPACE");
-    setViewMode("3D_SPACE"); // Switch to 3D Space to watch shockwave in action!
-    showToast(`Cascade Shockwave Active: ${result.originSupplier.name}`, "info");
+    setViewMode("3D_SPACE");
+    sound.playShockwave();
+    showToast(`Cascade propagation initialized: ${result.monetaryExposureINR} at risk`, "error");
   };
 
-  const handleEnterWorkspace = (mode: ViewMode = "3D_SPACE") => {
-    setViewMode(mode);
-    setPageMode("WORKSPACE");
+  const handleSaveSupplier = async (supplierData: Partial<Supplier>) => {
+    try {
+      const isEditing = !!editingSupplier;
+      const url = isEditing ? `/api/suppliers/${editingSupplier.id}` : "/api/suppliers";
+      const method = isEditing ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(supplierData)
+      });
+
+      if (!res.ok) throw new Error("Failed to save supplier");
+
+      const saved = await res.json();
+      if (isEditing) {
+        setSuppliers(prev => prev.map(s => (s.id === saved.id ? saved : s)));
+        showToast(`Updated supplier: ${saved.name}`, "success");
+      } else {
+        setSuppliers(prev => [saved, ...prev]);
+        showToast(`Added MSME: ${saved.name}`, "success");
+      }
+
+      // Refresh network topology
+      fetch("/api/network")
+        .then(r => r.json())
+        .then(data => setNetworkData(data))
+        .catch(() => {});
+
+      setIsAddEditOpen(false);
+      setEditingSupplier(null);
+    } catch (e: any) {
+      console.error(e);
+      showToast(e.message || "Failed to save supplier", "error");
+    }
+  };
+
+  const handleDeleteSupplier = async (supplierId: string) => {
+    if (!confirm("Are you sure you want to remove this MSME supplier from the monitoring network?")) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/suppliers/${supplierId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      setSuppliers(prev => prev.filter(s => s.id !== supplierId));
+      showToast("Supplier removed from graph roster", "info");
+
+      // Refresh network
+      fetch("/api/network")
+        .then(r => r.json())
+        .then(data => setNetworkData(data))
+        .catch(() => {});
+    } catch (e) {
+      showToast("Could not remove supplier", "error");
+    }
   };
 
   const handleLogout = async () => {
+    sound.playClick();
     try {
       await logOut();
     } catch (e) {}
@@ -255,8 +268,13 @@ export default function App() {
     showToast("Signed out. Returned to Landing page.", "info");
   };
 
+  const handleUpdateProfile = (updatedUser: User) => {
+    setUser(updatedUser);
+    showToast("Profile details updated successfully", "success");
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300 selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300 selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200 relative">
       {/* Toast Alert Floating Top Center */}
       {toastMessage && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-xl bg-slate-900/95 backdrop-blur-xl border border-cyan-500/40 shadow-2xl flex items-center gap-2 text-xs font-mono text-cyan-200 animate-in fade-in slide-in-from-top-4">
@@ -272,6 +290,8 @@ export default function App() {
           onOpenCopilot={() => setIsCopilotOpen(true)}
           onOpenCsvModal={() => setIsCsvModalOpen(true)}
           onOpenLogin={() => setPageMode("LOGIN")}
+          user={user}
+          onOpenProfile={() => setIsProfileOpen(true)}
           theme={theme}
           onToggleTheme={toggleTheme}
           isMuted={isMuted}
@@ -306,6 +326,7 @@ export default function App() {
               setIsAddEditOpen(true);
             }}
             user={user}
+            onOpenProfile={() => setIsProfileOpen(true)}
             onLoginClick={() => setPageMode("LOGIN")}
             onLogout={handleLogout}
             theme={theme}
@@ -320,6 +341,7 @@ export default function App() {
               stats={stats}
               systemHealth={systemHealth}
               onOpenCopilot={() => setIsCopilotOpen(true)}
+              isLoading={loading}
             />
 
             {/* Knowledge Graph View Switcher Container */}
@@ -361,13 +383,13 @@ export default function App() {
             <div className="pt-4 border-t border-slate-200 dark:border-slate-800/80">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
                   <h2 className="text-lg font-bold text-slate-900 dark:text-white font-mono uppercase tracking-wider">
                     Active Supplier Trust Roster ({suppliers.length})
                   </h2>
                 </div>
                 <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
-                  Real-time payment lag &amp; delivery verification
+                  Real-time payment lag &amp; statutory verification
                 </span>
               </div>
 
@@ -402,7 +424,7 @@ export default function App() {
           <footer className="mt-12 border-t border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#0A0A0C]/90 backdrop-blur-md py-6 text-xs font-mono text-slate-500 dark:text-slate-400 transition-colors duration-300 w-full relative z-10">
             <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
-                <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
                 <span className="font-semibold tracking-wide">TrustGraph AI • 3D Immersive Supply Chain Knowledge Graph</span>
               </div>
               <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">
@@ -421,7 +443,21 @@ export default function App() {
         </AuroraBackground>
       )}
 
+      {/* Floating Round AI Agent Button in Bottom-Right Corner (Present on both Landing Page and Hero/Workspace) */}
+      <FloatingAIAgentButton
+        onClick={() => setIsCopilotOpen(prev => !prev)}
+        isOpen={isCopilotOpen}
+      />
+
       {/* Shared Modals and Drawers (accessible from both Landing & Workspace) */}
+
+      {/* User Profile Settings Modal */}
+      <UserProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+        user={user}
+        onUpdateProfile={handleUpdateProfile}
+      />
 
       {/* Supplier Forensic Detail Drawer */}
       <SupplierDetailDrawer
@@ -465,7 +501,7 @@ export default function App() {
         onSave={handleSaveSupplier}
       />
 
-      {/* AI Supply Chain Copilot Drawer */}
+      {/* AI Supply Chain Copilot Drawer with Translucent Glassmorphism */}
       <AICopilotDrawer
         isOpen={isCopilotOpen}
         onClose={() => setIsCopilotOpen(false)}
@@ -487,4 +523,3 @@ export default function App() {
     </div>
   );
 }
-

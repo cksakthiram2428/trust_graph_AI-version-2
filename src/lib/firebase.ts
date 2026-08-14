@@ -100,6 +100,21 @@ export async function syncUserToFirestore(
   }
 }
 
+export async function updateUserProfileInFirestore(uid: string, updates: Record<string, any>) {
+  try {
+    if (!uid) return;
+    const userRef = doc(db, "users", uid);
+    await setDoc(userRef, {
+      ...updates,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    return true;
+  } catch (e) {
+    console.warn("Could not update user profile in Firestore:", e);
+    return false;
+  }
+}
+
 export function subscribeToRealtimeUsers(callback: (users: any[]) => void) {
   try {
     const usersCol = collection(db, "users");

@@ -111,20 +111,20 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
   return (
     <div
       id="supplier-modal-backdrop"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in"
     >
-      <div className="relative w-full max-w-2xl rounded-3xl cyber-glass border border-cyan-500/30 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-2xl rounded-3xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-cyan-500/30 shadow-2xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto text-slate-900 dark:text-slate-100 transition-colors">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+        <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-400">
+            <div className="p-2.5 rounded-xl bg-sky-500/10 dark:bg-cyan-500/20 border border-sky-500/30 dark:border-cyan-400/40 text-sky-600 dark:text-cyan-400">
               <Building className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white tracking-tight font-mono">
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight font-display">
                 {isEdit ? "Update Supplier Parameters" : "Register New Supply Chain Partner"}
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-sans">
                 Neural trust score adjusts dynamically in real time
               </p>
             </div>
@@ -133,7 +133,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
           <button
             id="close-supplier-modal-btn"
             onClick={() => { sound.playClick(); onClose(); }}
-            className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -142,21 +142,21 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           {/* Live Trust Preview Banner */}
-          <div className="p-3.5 rounded-xl bg-slate-900/90 border border-cyan-500/30 flex items-center justify-between">
+          <div className="p-3.5 rounded-xl bg-sky-50/70 dark:bg-slate-900/90 border border-sky-200 dark:border-cyan-500/30 flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span className="text-xs font-mono text-cyan-300 font-semibold">
+              <Sparkles className="w-4 h-4 text-sky-600 dark:text-cyan-400" />
+              <span className="text-xs font-mono text-sky-700 dark:text-cyan-300 font-bold">
                 Live Calculated Trust Rating
               </span>
             </div>
-            <span className="text-lg font-mono font-extrabold text-white">
+            <span className="text-lg font-mono font-extrabold text-slate-900 dark:text-white">
               {liveScore} / 100
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-mono text-slate-300 uppercase mb-1">
+              <label className="block text-xs font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold mb-1">
                 Supplier / Company Name *
               </label>
               <input
@@ -165,18 +165,18 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Apex Semiconductors Ltd"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:border-sky-500 dark:focus:border-cyan-400 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-300 uppercase mb-1">
+              <label className="block text-xs font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold mb-1">
                 Industry Domain
               </label>
               <select
                 value={industry}
                 onChange={(e) => setIndustry(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none font-sans cursor-pointer"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:border-sky-500 dark:focus:border-cyan-400 focus:outline-none font-sans cursor-pointer"
               >
                 <option value="Electronics & Microchips">Electronics & Microchips</option>
                 <option value="Pharmaceuticals & APIs">Pharmaceuticals & APIs</option>
@@ -188,13 +188,13 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-300 uppercase mb-1">
+              <label className="block text-xs font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold mb-1">
                 Supply Chain Hierarchy Tier
               </label>
               <select
                 value={tier}
                 onChange={(e) => setTier(e.target.value as Supplier["tier"])}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none font-sans cursor-pointer"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:border-sky-500 dark:focus:border-cyan-400 focus:outline-none font-sans cursor-pointer"
               >
                 <option value="Tier-1 Direct">Tier-1 Direct</option>
                 <option value="Tier-2 Sub-assembly">Tier-2 Sub-assembly</option>
@@ -203,7 +203,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-slate-300 uppercase mb-1">
+              <label className="block text-xs font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold mb-1">
                 City / State
               </label>
               <input
@@ -211,7 +211,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 value={city}
                 onChange={(e) => setCity(e.target.value)}
                 placeholder="e.g. Pune, Maharashtra"
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:border-sky-500 dark:focus:border-cyan-400 focus:outline-none"
               />
             </div>
           </div>
@@ -219,7 +219,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
           {/* Operational Metrics Sliders / Inputs */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
             <div>
-              <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">
+              <label className="block text-[11px] font-mono text-slate-600 dark:text-slate-400 uppercase font-semibold mb-1">
                 On-Time Delivery (%)
               </label>
               <input
@@ -228,12 +228,12 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 max="100"
                 value={deliveryReliability}
                 onChange={(e) => setDeliveryReliability(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 font-mono text-center"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 font-mono text-center font-bold"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">
+              <label className="block text-[11px] font-mono text-slate-600 dark:text-slate-400 uppercase font-semibold mb-1">
                 Quality Rate (%)
               </label>
               <input
@@ -242,12 +242,12 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 max="100"
                 value={qualityRate}
                 onChange={(e) => setQualityRate(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 font-mono text-center"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 font-mono text-center font-bold"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">
+              <label className="block text-[11px] font-mono text-slate-600 dark:text-slate-400 uppercase font-semibold mb-1">
                 Payment Delay (Days)
               </label>
               <input
@@ -256,12 +256,12 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 max="90"
                 value={paymentDelay}
                 onChange={(e) => setPaymentDelay(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 font-mono text-center"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 font-mono text-center font-bold"
               />
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono text-slate-400 uppercase mb-1">
+              <label className="block text-[11px] font-mono text-slate-600 dark:text-slate-400 uppercase font-semibold mb-1">
                 Open Grievances
               </label>
               <input
@@ -270,31 +270,31 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
                 max="50"
                 value={complaintCount}
                 onChange={(e) => setComplaintCount(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 font-mono text-center"
+                className="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 font-mono text-center font-bold"
               />
             </div>
           </div>
 
           {/* Qualitative AI Insight / Notes */}
           <div>
-            <label className="block text-xs font-mono text-slate-300 uppercase mb-1">
-              Operational Intelligence & Notes
+            <label className="block text-xs font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold mb-1">
+              Operational Intelligence &amp; Notes
             </label>
             <textarea
               rows={2}
               value={insight}
               onChange={(e) => setInsight(e.target.value)}
               placeholder="e.g. ISO 9001 certified. Dual fab lines in Chennai. Strong balance sheet."
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-slate-100 focus:border-cyan-400 focus:outline-none font-sans resize-none"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 text-sm text-slate-900 dark:text-slate-100 focus:border-sky-500 dark:focus:border-cyan-400 focus:outline-none font-sans resize-none"
             />
           </div>
 
           {/* Footer Submit */}
-          <div className="mt-6 pt-4 border-t border-slate-800 flex justify-end gap-3">
+          <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
             <button
               type="button"
               onClick={() => { sound.playClick(); onClose(); }}
-              className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-850 text-xs font-mono text-slate-300 transition-colors cursor-pointer"
+              className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-850 text-xs font-mono text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -303,7 +303,7 @@ export const SupplierModal: React.FC<SupplierModalProps> = ({
               id="submit-supplier-btn"
               type="submit"
               disabled={isSaving}
-              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold font-mono text-xs flex items-center gap-2 shadow-lg shadow-cyan-500/25 cursor-pointer disabled:opacity-50"
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-bold font-mono text-xs flex items-center gap-2 shadow-md shadow-sky-500/25 cursor-pointer disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
               <span>{isSaving ? "Saving to Knowledge Graph..." : isEdit ? "Update Supplier" : "Register Supplier"}</span>

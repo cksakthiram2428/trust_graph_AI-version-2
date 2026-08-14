@@ -317,23 +317,23 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
   return (
     <div
       id="ai-copilot-drawer"
-      className="fixed inset-y-0 right-0 z-50 w-full max-w-xl bg-[#0A0A0C]/95 backdrop-blur-2xl border-l border-cyan-500/30 shadow-2xl flex flex-col p-6 animate-in slide-in-from-right duration-300 font-sans"
+      className="fixed inset-y-0 right-0 z-50 w-full max-w-xl bg-white/85 dark:bg-[#07070B]/85 backdrop-blur-2xl border-l border-slate-200/80 dark:border-white/10 shadow-2xl flex flex-col p-6 animate-in slide-in-from-right duration-300 font-sans text-slate-900 dark:text-slate-100"
     >
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-white/10 shrink-0">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-200/80 dark:border-white/10 shrink-0">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#38BDF8]/20 to-blue-600/20 border border-[#38BDF8]/40 text-[#38BDF8]">
+          <div className="p-2.5 rounded-xl bg-sky-500/15 dark:bg-cyan-400/20 border border-sky-500/30 dark:border-cyan-400/40 text-sky-600 dark:text-cyan-300 shadow-sm">
             <Bot className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono uppercase text-[#38BDF8] tracking-wider">
+              <span className="text-[10px] font-mono uppercase text-sky-600 dark:text-cyan-400 tracking-wider font-bold">
                 Multi-Model Neural Intelligence
               </span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </div>
-            <h2 className="text-lg font-bold text-white tracking-tight font-display">
-              TrustGraph AI Multi-Agent Copilot
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight font-display">
+              TrustGraph AI Copilot
             </h2>
           </div>
         </div>
@@ -341,23 +341,23 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
         <button
           id="close-copilot-drawer-btn"
           onClick={() => { sound.playClick(); onClose(); }}
-          className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
+          className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
       </div>
 
       {/* Model Selector & Grounding Controls Bar */}
-      <div className="shrink-0 py-3 border-b border-white/10 space-y-2">
+      <div className="shrink-0 py-3 border-b border-slate-200/80 dark:border-white/10 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           {/* Model Choice Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/5 border border-white/10 text-[11px] font-mono">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[11px] font-mono">
             <button
               onClick={() => { sound.playClick(); setActiveModel("gemini-3.5-flash"); setIsHighThinkingMode(false); }}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 activeModel === "gemini-3.5-flash" && !isHighThinkingMode
-                  ? "bg-[#38BDF8] text-[#0A0A0C] font-bold shadow-md shadow-cyan-500/20"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-sky-500 dark:bg-cyan-400 text-white dark:text-slate-950 font-bold shadow-md shadow-sky-500/20"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               }`}
             >
               3.5 Flash (General)
@@ -366,8 +366,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
               onClick={() => { sound.playClick(); setActiveModel("gemini-3.1-pro-preview"); setIsHighThinkingMode(false); }}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 activeModel === "gemini-3.1-pro-preview" && !isHighThinkingMode
-                  ? "bg-[#38BDF8] text-[#0A0A0C] font-bold shadow-md shadow-cyan-500/20"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-sky-500 dark:bg-cyan-400 text-white dark:text-slate-950 font-bold shadow-md shadow-sky-500/20"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               }`}
             >
               3.1 Pro (Complex)
@@ -376,8 +376,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
               onClick={() => { sound.playClick(); setActiveModel("gemini-3.1-flash-lite"); setIsHighThinkingMode(false); }}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 activeModel === "gemini-3.1-flash-lite" && !isHighThinkingMode
-                  ? "bg-[#38BDF8] text-[#0A0A0C] font-bold shadow-md shadow-cyan-500/20"
-                  : "text-slate-400 hover:text-slate-200"
+                  ? "bg-sky-500 dark:bg-cyan-400 text-white dark:text-slate-950 font-bold shadow-md shadow-sky-500/20"
+                  : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
               }`}
             >
               3.1 Lite (Fast)
@@ -393,11 +393,11 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             }}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
               isHighThinkingMode
-                ? "bg-purple-600/30 border-purple-400 text-purple-200 shadow-lg shadow-purple-500/20"
-                : "bg-white/5 border-white/10 text-slate-400 hover:border-purple-400/40"
+                ? "bg-purple-500/20 border-purple-500/50 text-purple-700 dark:text-purple-300 shadow-md shadow-purple-500/20 font-bold"
+                : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:border-purple-400/40"
             }`}
           >
-            <Brain className="w-3.5 h-3.5" />
+            <Brain className="w-3.5 h-3.5 text-purple-500" />
             <span>High Thinking</span>
           </button>
         </div>
@@ -409,12 +409,12 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             onClick={() => { sound.playClick(); setUseSearchGrounding(!useSearchGrounding); }}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono border transition-all cursor-pointer ${
               useSearchGrounding
-                ? "bg-blue-500/20 border-blue-400 text-blue-300"
-                : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-300"
+                ? "bg-blue-500/20 border-blue-400 text-blue-700 dark:text-blue-300 font-semibold"
+                : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300"
             }`}
           >
-            <SearchIcon className="w-3 h-3" />
-            <span>Google Search Data</span>
+            <SearchIcon className="w-3 h-3 text-blue-500" />
+            <span>Google Search</span>
           </button>
 
           {/* Google Maps Grounding */}
@@ -422,21 +422,21 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             onClick={() => { sound.playClick(); setUseMapsGrounding(!useMapsGrounding); }}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono border transition-all cursor-pointer ${
               useMapsGrounding
-                ? "bg-emerald-500/20 border-emerald-400 text-emerald-300"
-                : "bg-white/5 border-white/10 text-slate-400 hover:text-slate-300"
+                ? "bg-emerald-500/20 border-emerald-400 text-emerald-700 dark:text-emerald-300 font-semibold"
+                : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-300"
             }`}
           >
-            <MapPin className="w-3 h-3" />
-            <span>Google Maps Grounding</span>
+            <MapPin className="w-3 h-3 text-emerald-500" />
+            <span>Google Maps</span>
           </button>
 
           {/* Document Scanner Trigger */}
           <button
             onClick={() => { sound.playClick(); fileInputRef.current?.click(); }}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono bg-white/5 border border-white/10 text-amber-300 hover:border-amber-400/40 transition-all cursor-pointer ml-auto"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-amber-600 dark:text-amber-300 hover:border-amber-400/40 transition-all cursor-pointer ml-auto"
           >
-            <FileText className="w-3 h-3" />
-            <span>Scan Invoice/Doc</span>
+            <FileText className="w-3 h-3 text-amber-500" />
+            <span>Scan Doc</span>
           </button>
           <input
             type="file"
@@ -451,12 +451,12 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             onClick={handleToggleVoice}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono border transition-all cursor-pointer ${
               isListening
-                ? "bg-red-500/30 border-red-400 text-red-200 animate-pulse"
-                : "bg-white/5 border-white/10 text-cyan-300 hover:border-cyan-400/40"
+                ? "bg-red-500/20 border-red-500 text-red-600 dark:text-red-300 animate-pulse font-bold"
+                : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10 text-cyan-700 dark:text-cyan-300 hover:border-cyan-400/40"
             }`}
           >
-            {isListening ? <MicOff className="w-3 h-3 text-red-400" /> : <Mic className="w-3 h-3" />}
-            <span>{isListening ? "Listening..." : "Voice Live API"}</span>
+            {isListening ? <MicOff className="w-3 h-3 text-red-500" /> : <Mic className="w-3 h-3 text-cyan-500" />}
+            <span>{isListening ? "Listening..." : "Live Voice API"}</span>
           </button>
         </div>
       </div>
@@ -471,20 +471,22 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             }`}
           >
             {m.sender === "ai" && (
-              <div className="w-7 h-7 rounded-lg bg-cyan-950/80 border border-[#38BDF8]/30 flex items-center justify-center shrink-0 text-[#38BDF8] mt-1">
+              <div className="w-7 h-7 rounded-xl bg-sky-500/10 dark:bg-cyan-950/80 border border-sky-500/30 dark:border-[#38BDF8]/30 flex items-center justify-center shrink-0 text-sky-600 dark:text-[#38BDF8] mt-1 shadow-sm">
                 <Sparkles className="w-4 h-4" />
               </div>
             )}
             <div
-              className={`p-3.5 rounded-2xl max-w-[85%] ${
+              className={`p-4 rounded-2xl max-w-[85%] backdrop-blur-md shadow-sm ${
                 m.sender === "user"
-                  ? "bg-[#38BDF8]/20 border border-[#38BDF8]/40 text-white rounded-br-none"
-                  : "bg-white/[0.04] border border-white/10 text-slate-200 rounded-bl-none shadow-md"
+                  ? "bg-sky-500 text-white rounded-br-none shadow-sky-500/20"
+                  : "bg-slate-100/90 dark:bg-white/[0.06] border border-slate-200/80 dark:border-white/10 text-slate-800 dark:text-slate-100 rounded-bl-none"
               }`}
             >
               {/* Model Attribution Badge */}
               {m.modelUsed && (
-                <div className="flex items-center gap-1.5 mb-1.5 text-[9px] font-mono text-[#38BDF8] uppercase tracking-wider">
+                <div className={`flex items-center gap-1.5 mb-1.5 text-[9px] font-mono uppercase tracking-wider ${
+                  m.sender === "user" ? "text-sky-100" : "text-sky-600 dark:text-cyan-400 font-bold"
+                }`}>
                   <Cpu className="w-2.5 h-2.5" />
                   <span>Model: {m.modelUsed}</span>
                 </div>
@@ -494,8 +496,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
 
               {/* Grounding Source Links if present */}
               {m.sources && m.sources.length > 0 && (
-                <div className="mt-2.5 pt-2 border-t border-white/10 space-y-1">
-                  <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+                <div className="mt-2.5 pt-2 border-t border-slate-200 dark:border-white/10 space-y-1">
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
                     Grounding Sources ({m.sources.length}):
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -505,7 +507,7 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
                         href={s.url}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-[10px] font-mono text-[#38BDF8] hover:underline"
+                        className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-white dark:bg-white/10 border border-slate-200 dark:border-white/15 text-[10px] font-mono text-sky-600 dark:text-cyan-300 hover:underline shadow-xs"
                       >
                         <span>{s.title}</span>
                         <ExternalLink className="w-2.5 h-2.5" />
@@ -515,7 +517,9 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
                 </div>
               )}
 
-              <div className="mt-1 text-[9px] font-mono text-slate-500 text-right">
+              <div className={`mt-1.5 text-[9px] font-mono text-right ${
+                m.sender === "user" ? "text-sky-200" : "text-slate-400 dark:text-slate-500"
+              }`}>
                 {m.timestamp}
               </div>
             </div>
@@ -523,7 +527,7 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
         ))}
 
         {isGenerating && (
-          <div className="flex items-center gap-2 p-3 text-xs text-[#38BDF8] font-mono animate-pulse">
+          <div className="flex items-center gap-2 p-3 text-xs text-sky-600 dark:text-cyan-400 font-mono animate-pulse">
             <Sparkles className="w-4 h-4" />
             <span>Formulating {isHighThinkingMode ? "High-Thinking Deep Reasoner" : "Gemini"} response...</span>
           </div>
@@ -532,8 +536,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
       </div>
 
       {/* Quick Prompts */}
-      <div className="shrink-0 space-y-2 pt-2 border-t border-white/10">
-        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider block">
+      <div className="shrink-0 space-y-2 pt-2 border-t border-slate-200/80 dark:border-white/10">
+        <span className="text-[10px] font-mono text-slate-500 dark:text-slate-400 uppercase tracking-wider block">
           Suggested Multi-Modal Prompts
         </span>
         <div className="flex flex-wrap gap-1.5">
@@ -541,7 +545,7 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             <button
               key={idx}
               onClick={() => handleSendMessage(qp)}
-              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[#38BDF8]/40 text-[11px] text-slate-300 text-left transition-colors cursor-pointer"
+              className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 hover:border-sky-500/40 text-[11px] text-slate-700 dark:text-slate-300 text-left transition-colors cursor-pointer shadow-xs"
             >
               {qp}
             </button>
@@ -570,13 +574,13 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
               ? "Maps query (e.g. factory coordinates in Bengaluru)..."
               : "Ask Copilot about any vendor, delay, or supply shock..."
           }
-          className="w-full pl-3.5 pr-12 py-2.5 rounded-xl bg-[#0A0A0C] border border-white/10 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-[#38BDF8] resize-none font-sans"
+          className="w-full pl-3.5 pr-12 py-2.5 rounded-2xl bg-slate-100/90 dark:bg-[#0A0A0C] border border-slate-200 dark:border-white/10 text-xs text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-sky-500 resize-none font-sans shadow-inner"
         />
         <button
           id="send-copilot-msg-btn"
           disabled={!inputPrompt.trim() || isGenerating}
           onClick={() => handleSendMessage()}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-lg bg-[#38BDF8] hover:bg-cyan-300 text-[#0A0A0C] disabled:opacity-30 cursor-pointer transition-all shadow-md shadow-cyan-500/20"
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 disabled:opacity-30 cursor-pointer transition-all shadow-md shadow-sky-500/20"
         >
           <Send className="w-4 h-4" />
         </button>
