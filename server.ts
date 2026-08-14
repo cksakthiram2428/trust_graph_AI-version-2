@@ -32,7 +32,7 @@ function getAI(): GoogleGenAI | null {
 async function safeGeminiGenerate(
   preferredModel: string,
   params: { contents: any; config?: any },
-  fallbackModels: string[] = ["gemini-2.5-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite"]
+  fallbackModels: string[] = ["gemini-3.7-flash", "gemini-3.1-flash-lite"]
 ): Promise<{ text: string; candidate?: any; modelUsed: string } | null> {
   const ai = getAI();
   if (!ai) return null;
@@ -696,12 +696,12 @@ Return a structured JSON object with these exact keys:
 
   try {
     const result = await safeGeminiGenerate(
-      "gemini-2.5-flash",
+      "gemini-3.7-flash",
       {
         contents: prompt,
         config: { responseMimeType: "application/json" }
       },
-      ["gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-2.5-pro"]
+      ["gemini-3.1-flash-lite"]
     );
 
     if (result && result.text) {
@@ -749,9 +749,9 @@ app.post("/api/ai/simulate-cascade", async (req, res) => {
   try {
     const prompt = `In 2 short sentences, describe the systemic supply chain shock ripple effect when ${failedSupplier.name} (${failedSupplier.industry}, Score: ${failedSupplier.score}) suffers a sudden failure (${shockType || "Insolvency/Production Halt"}). Mention financial exposure ${monetaryExposureINR} and ${estimatedDowntimeDays} days downtime risk.`;
     const aiResp = await safeGeminiGenerate(
-      "gemini-2.5-flash",
+      "gemini-3.7-flash",
       { contents: prompt },
-      ["gemini-3.5-flash", "gemini-3.1-flash-lite"]
+      ["gemini-3.1-flash-lite"]
     );
     if (aiResp && aiResp.text) {
       aiCascadeNarrative = aiResp.text.trim();
@@ -780,7 +780,7 @@ app.post("/api/ai/simulate-cascade", async (req, res) => {
 
 // AI MULTI-TURN COPILOT CHAT
 app.post("/api/ai/copilot-chat", async (req, res) => {
-  const { message, history = [], modelChoice = "gemini-2.5-flash", useSearch = false, useMaps = false } = req.body;
+  const { message, history = [], modelChoice = "gemini-3.7-flash", useSearch = false, useMaps = false } = req.body;
   if (!message) return res.status(400).json({ error: "Message required" });
 
   const defaultReply = `[TrustGraph AI Intelligence]: Based on your monitored supply chain with ${suppliers.length} active vendors, our models show highest vulnerability in Verma PharmaTech Pvt Ltd (Score 43/100, 23-day delay) and Patel BioSolutions Ltd (Score 29/100). Mehta Semiconductors (Score 91/100) remains your most resilient partner. Would you like me to trigger a 3D cascade simulation or generate an emergency replacement RFP?`;
@@ -814,11 +814,11 @@ Maintain a calm, precise, cybernetic executive tone. Provide actionable recommen
   if (tools.length > 0) config.tools = tools;
 
   try {
-    const targetModel = modelChoice || "gemini-2.5-flash";
+    const targetModel = modelChoice || "gemini-3.7-flash";
     const result = await safeGeminiGenerate(
       targetModel,
       { contents, config },
-      ["gemini-2.5-flash", "gemini-3.5-flash", "gemini-3.1-flash-lite"]
+      ["gemini-3.7-flash", "gemini-3.1-flash-lite"]
     );
 
     if (result && result.text) {
@@ -899,7 +899,7 @@ Specific User Investigation Focus: ${query || "Assess systemic shock propagation
 Return a comprehensive JSON format:
 {
   "supplierName": "${supplier.name}",
-  "thinkingMode": "gemini-2.5-pro (High Thinking)",
+  "thinkingMode": "gemini-3.1-pro-preview (High Thinking)",
   "deepReasoningSummary": "Thorough multi-paragraph forensic breakdown of risk mechanisms.",
   "systemicVulnerabilities": ["vulnerability 1", "vulnerability 2", "vulnerability 3", "vulnerability 4"],
   "contagionShockProjection": "Detailed assessment of downstream impact on Tier-1 and MSME Hub.",
@@ -913,15 +913,15 @@ Return a comprehensive JSON format:
 
   try {
     const result = await safeGeminiGenerate(
-      "gemini-2.5-pro",
+      "gemini-3.1-pro-preview",
       {
         contents: prompt,
         config: {
-          thinkingConfig: { thinkingBudget: 4096 },
+          thinkingConfig: { thinkingLevel: "HIGH" },
           responseMimeType: "application/json"
         }
       },
-      ["gemini-2.5-flash", "gemini-3.5-flash", "gemini-3.1-pro-preview"]
+      ["gemini-3.7-flash", "gemini-3.1-flash-lite"]
     );
 
     if (result && result.text) {
@@ -975,7 +975,7 @@ Return a JSON with these exact fields:
 
   try {
     const result = await safeGeminiGenerate(
-      "gemini-2.5-flash",
+      "gemini-3.7-flash",
       {
         contents: [
           {
@@ -988,7 +988,7 @@ Return a JSON with these exact fields:
         ],
         config: { responseMimeType: "application/json" }
       },
-      ["gemini-2.5-pro", "gemini-3.5-flash"]
+      ["gemini-3.1-flash-lite", "gemini-3.1-pro-preview"]
     );
 
     if (result && result.text) {
@@ -1021,19 +1021,19 @@ Respond with a concise, spoken-friendly, conversational answer in 1-2 direct sen
 
   try {
     const result = await safeGeminiGenerate(
-      "gemini-2.5-flash",
+      "gemini-3.7-flash",
       { contents: prompt },
-      ["gemini-3.5-flash", "gemini-3.1-flash-lite"]
+      ["gemini-3.1-flash-lite"]
     );
 
     res.json({
       spokenResponse: result?.text || defaultVoice,
-      modelUsed: result?.modelUsed || "gemini-2.5-flash"
+      modelUsed: result?.modelUsed || "gemini-3.7-flash"
     });
   } catch (err: any) {
     res.json({
       spokenResponse: defaultVoice,
-      modelUsed: "gemini-2.5-flash (Offline Mode)"
+      modelUsed: "gemini-3.7-flash (Offline Mode)"
     });
   }
 });
