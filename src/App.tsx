@@ -78,7 +78,9 @@ export default function App() {
   const [networkData, setNetworkData] = useState<NetworkData>({ nodes: [], edges: [] });
   const [stats, setStats] = useState<PlatformStat[]>([]);
   const [systemHealth, setSystemHealth] = useState<string>("Active Neural Monitoring");
+  const [lastRealtimeRefresh, setLastRealtimeRefresh] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   // User Auth State with Firebase integration
   const [user, setUser] = useState<User | null>({
@@ -157,6 +159,7 @@ export default function App() {
         const statsData = await statsRes.json();
         setStats(statsData.stats || []);
         if (statsData.systemHealth) setSystemHealth(statsData.systemHealth);
+        if (statsData.summary?.lastRealtimeRefresh) setLastRealtimeRefresh(statsData.summary.lastRealtimeRefresh);
       }
       if (networkRes.ok) {
         const netData = await networkRes.json();
@@ -273,6 +276,31 @@ export default function App() {
     showToast("Profile details updated successfully", "success");
   };
 
+  const handleRefreshRealtime = async () => {
+    setRefreshing(true);
+    sound.playAISuccess();
+    try {
+      const res = await fetch("/api/admin/refresh-realtime", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        showToast(`Real-time Refresh Successful: Analyzed ${data.data.adjustmentsCount} risks`, "success");
+        setLastRealtimeRefresh(new Date().toISOString());
+        // Refresh supplier data to show new scores/data
+        fetchInitialData();
+      } else {
+        throw new Error(data.error || "Refresh failed");
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message || "Failed to sync real-time data", "error");
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300 selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200 relative">
       {/* Toast Alert Floating Top Center */}
@@ -342,6 +370,9 @@ export default function App() {
               systemHealth={systemHealth}
               onOpenCopilot={() => setIsCopilotOpen(true)}
               isLoading={loading}
+              lastRealtimeRefresh={lastRealtimeRefresh}
+              onRefreshRealtime={handleRefreshRealtime}
+              isRefreshing={refreshing}
             />
 
             {/* Knowledge Graph View Switcher Container */}

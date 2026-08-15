@@ -24,6 +24,21 @@ export interface Supplier {
   nicCode?: string;
   mcaCin?: string;
   incorporationDate?: string;
+  realTimeData?: {
+    weather?: {
+      temp: number;
+      condition: string;
+      impact: string;
+      fetchedAt: string;
+    };
+    news?: {
+      headline: string;
+      risk: string;
+      publishedAt: string;
+    }[];
+    economicImpact?: string;
+    lastRefresh?: string;
+  };
 }
 
 export interface NetworkNode {
@@ -69,6 +84,7 @@ export interface StatsResponse {
     highRiskCount: number;
     tier1Count: number;
     systemHealth: string;
+    lastRealtimeRefresh?: string;
   };
 }
 

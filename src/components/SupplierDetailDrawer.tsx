@@ -15,7 +15,10 @@ import {
   FileCheck, 
   CheckCircle,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  CloudSun,
+  Newspaper,
+  Globe
 } from "lucide-react";
 
 interface SupplierDetailDrawerProps {
@@ -163,23 +166,88 @@ export const SupplierDetailDrawer: React.FC<SupplierDetailDrawerProps> = ({
         {/* Operational Stats Grid */}
         <div className="grid grid-cols-2 gap-2.5 w-full text-xs">
           <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium">Payment Lag</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium text-nowrap">Payment Lag</span>
             <span className="font-semibold text-slate-900 dark:text-slate-100 font-mono">{supplier.paymentDelay}</span>
           </div>
           <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium">Fulfillment Reliability</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium text-nowrap">Fulfillment Reliability</span>
             <span className="font-semibold text-emerald-600 dark:text-emerald-400 font-mono">{supplier.deliveryReliability}</span>
           </div>
           <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium">Quality Acceptance</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium text-nowrap">Quality Acceptance</span>
             <span className="font-semibold text-sky-600 dark:text-cyan-300 font-mono">{supplier.qualityRate}</span>
           </div>
           <div className="p-2.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 shadow-xs">
-            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium">Monthly Volume</span>
+            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono block font-medium text-nowrap">Monthly Volume</span>
             <span className="font-semibold text-indigo-600 dark:text-indigo-300 font-mono">{supplier.monthlyVolumeINR}</span>
           </div>
         </div>
       </div>
+
+      {/* Real-time External Intelligence Section */}
+      {supplier.realTimeData && (
+        <div className="mt-6 p-5 rounded-2xl bg-sky-500/5 dark:bg-sky-500/10 border border-sky-500/20 dark:border-sky-500/30">
+          <div className="flex items-center gap-2 mb-4">
+            <Globe className="w-4 h-4 text-sky-500" />
+            <span className="font-mono text-xs font-bold text-sky-700 dark:text-sky-300 uppercase tracking-wider">
+              Real-time External Intelligence
+            </span>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Weather Impact */}
+            {supplier.realTimeData.weather && (
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/50 dark:bg-black/20 border border-white/20">
+                <CloudSun className="w-5 h-5 text-amber-500 shrink-0" />
+                <div>
+                  <div className="text-[10px] font-mono text-slate-500 uppercase">Weather at {supplier.city.split(',')[0]}</div>
+                  <div className="text-xs font-bold">{supplier.realTimeData.weather.temp}°C • {supplier.realTimeData.weather.condition}</div>
+                  <div className="text-[11px] text-sky-600 dark:text-sky-400 mt-1 leading-tight font-medium italic">
+                    AI Assessment: {supplier.realTimeData.weather.impact}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Economic Context */}
+            {supplier.realTimeData.economicImpact && (
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/50 dark:bg-black/20 border border-white/20">
+                <TrendingUp className="w-5 h-5 text-emerald-500 shrink-0" />
+                <div>
+                  <div className="text-[10px] font-mono text-slate-500 uppercase">Macro-Economic Context</div>
+                  <div className="text-xs font-bold">{supplier.realTimeData.economicImpact}</div>
+                  <div className="text-[11px] text-slate-600 dark:text-slate-400 mt-1 leading-tight font-medium">
+                    World Bank Live Indicator
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Industry News Disruption Alerts */}
+          {supplier.realTimeData.news && supplier.realTimeData.news.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <div className="text-[10px] font-mono text-slate-500 uppercase flex items-center gap-1.5">
+                <Newspaper className="w-3 h-3" />
+                Industry Disruption Alerts
+              </div>
+              <div className="space-y-2">
+                {supplier.realTimeData.news.map((item, idx) => (
+                  <div key={idx} className="p-2.5 rounded-lg bg-white/50 dark:bg-black/20 border border-white/10">
+                    <div className="text-[11px] font-semibold text-slate-800 dark:text-slate-200 leading-tight">
+                      {item.headline}
+                    </div>
+                    <div className="flex items-center justify-between mt-1 text-[9px] font-mono uppercase tracking-tighter">
+                      <span className="text-rose-600 dark:text-rose-400 font-bold">RISK: {item.risk}</span>
+                      <span className="text-slate-500">{new Date(item.publishedAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Gemini AI Deep Forensic Analysis Section */}
       <div className="mt-6 space-y-4">

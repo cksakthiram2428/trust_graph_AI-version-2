@@ -12,6 +12,9 @@ interface StatsHUDProps {
   activeFilterTag?: string;
   onSelectFilterTag?: (tag: string) => void;
   isLoading?: boolean;
+  lastRealtimeRefresh?: string;
+  onRefreshRealtime?: () => void;
+  isRefreshing?: boolean;
 }
 
 export const StatsHUD: React.FC<StatsHUDProps> = ({ 
@@ -20,7 +23,10 @@ export const StatsHUD: React.FC<StatsHUDProps> = ({
   onOpenCopilot,
   activeFilterTag = "All",
   onSelectFilterTag,
-  isLoading = false
+  isLoading = false,
+  lastRealtimeRefresh,
+  onRefreshRealtime,
+  isRefreshing = false
 }) => {
   const [selectedTag, setSelectedTag] = useState<string>("All");
 
@@ -166,11 +172,24 @@ export const StatsHUD: React.FC<StatsHUDProps> = ({
           </div>
 
           <div className="mt-4 pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-xs font-mono">
-            <span className="text-slate-500">[01] OPERATIONAL</span>
-            <span className="text-sky-600 dark:text-[#38BDF8] font-bold flex items-center gap-1.5">
-              <Radio className="w-3 h-3 animate-ping" />
-              SYNCHRONIZED
-            </span>
+            <div className="flex flex-col">
+              <span className="text-slate-500 uppercase">Last AI Sync</span>
+              <span className="text-slate-900 dark:text-slate-300 font-bold">
+                {lastRealtimeRefresh ? new Date(lastRealtimeRefresh).toLocaleTimeString() : "Pending First Run"}
+              </span>
+            </div>
+            <button
+              onClick={() => onRefreshRealtime?.()}
+              disabled={isRefreshing}
+              className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 transition-all ${
+                isRefreshing 
+                  ? "bg-slate-100 dark:bg-white/5 text-slate-400 cursor-not-allowed" 
+                  : "bg-sky-500 hover:bg-sky-600 text-white shadow-sm shadow-sky-500/20 cursor-pointer"
+              }`}
+            >
+              <Zap className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
+              {isRefreshing ? "Syncing..." : "Refresh Intelligence"}
+            </button>
           </div>
         </div>
       </div>

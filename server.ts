@@ -2,6 +2,10 @@ import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
+import axios from "axios";
+import * as admin from "firebase-admin";
+import { initializeApp, getApps } from "firebase-admin/app";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 
 const app = express();
 const PORT = 3000;
@@ -83,6 +87,111 @@ interface Supplier {
   nicCode?: string;
   mcaCin?: string;
   incorporationDate?: string;
+  realTimeData?: {
+    weather?: {
+      temp: number;
+      condition: string;
+      impact: string;
+      fetchedAt: string;
+    };
+    news?: {
+      headline: string;
+      risk: string;
+      publishedAt: string;
+    }[];
+    economicImpact?: string;
+    lastRefresh?: string;
+  };
+}
+
+let lastRefreshTime: string | null = null;
+
+// Initialize Firebase Admin safely
+let firestoreDb: any = null;
+function getFirestoreInstance(): any {
+  if (!firestoreDb && process.env.FIREBASE_PROJECT_ID) {
+    try {
+      if (getApps().length === 0) {
+        initializeApp({
+          credential: (admin as any).credential.applicationDefault(),
+          projectId: process.env.FIREBASE_PROJECT_ID
+        });
+      }
+      firestoreDb = getFirestore();
+    } catch (err) {
+      console.warn("Failed to initialize Firebase Admin:", err);
+    }
+  }
+  return firestoreDb;
+}
+
+// ──────────────── DATA FETCHERS ────────────────
+
+async function fetchWeather(city: string) {
+  const apiKey = process.env.OPENWEATHER_API_KEY;
+  if (!apiKey) return null;
+  try {
+    const cityName = city.split(",")[0].trim();
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(cityName)},IN&units=metric&appid=${apiKey}`;
+    const resp = await axios.get(url);
+    return {
+      temp: resp.data.main.temp,
+      condition: resp.data.weather[0].main,
+      windSpeed: resp.data.wind.speed,
+      fetchedAt: new Date().toISOString()
+    };
+  } catch (err) {
+    console.error(`Weather fetch failed for ${city}:`, err);
+    return null;
+  }
+}
+
+async function fetchNews(industry: string) {
+  const apiKey = process.env.NEWSAPI_API_KEY;
+  if (!apiKey) return [];
+  try {
+    const url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(industry)}+disruption+OR+delay&pageSize=3&apiKey=${apiKey}`;
+    const resp = await axios.get(url);
+    return resp.data.articles.map((a: any) => ({
+      headline: a.title,
+      publishedAt: a.publishedAt,
+      source: a.source.name
+    }));
+  } catch (err) {
+    console.error(`News fetch failed for ${industry}:`, err);
+    return [];
+  }
+}
+
+async function fetchEconomics() {
+  // World Bank API for India GDP Growth
+  try {
+    const url = "https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1";
+    const resp = await axios.get(url);
+    const data = resp.data[1]?.[0];
+    return {
+      indicator: "GDP Growth",
+      value: data?.value ? `${data.value.toFixed(1)}%` : "N/A",
+      year: data?.date || "N/A",
+      source: "World Bank"
+    };
+  } catch (err) {
+    console.error("Economics fetch failed:", err);
+    return null;
+  }
+}
+
+async function fetchMsmeUpdates() {
+  const apiKey = process.env.DATA_GOV_IN_API_KEY;
+  if (!apiKey) return null;
+  try {
+    const url = `https://api.data.gov.in/resource/msme-uddyam-registration?api-key=${apiKey}&format=json&limit=5`;
+    const resp = await axios.get(url);
+    return resp.data;
+  } catch (err) {
+    console.error("MSME Registry fetch failed:", err);
+    return null;
+  }
 }
 
 let suppliers: Supplier[] = [
@@ -627,9 +736,189 @@ app.get("/api/stats", (req, res) => {
       averageTrustScore: avgScore,
       highRiskCount,
       tier1Count,
-      systemHealth: highRiskCount > 2 ? "Elevated Supply Chain Contagion Risk" : "Stable Network Resilience"
+      systemHealth: highRiskCount > 2 ? "Elevated Supply Chain Contagion Risk" : "Stable Network Resilience",
+      lastRealtimeRefresh: lastRefreshTime
     }
   });
+});
+
+// POST Refresh Real-time Data
+app.post("/api/admin/refresh-realtime", async (req, res) => {
+  const startTime = Date.now();
+  const dbInstance = getFirestoreInstance();
+  
+  if (dbInstance) {
+    await dbInstance.collection("refreshLogs").add({
+      status: "started",
+      timestamp: FieldValue.serverTimestamp()
+    });
+  }
+
+  try {
+    // 1. Parallel Data Fetching
+    const economics = await fetchEconomics();
+    const msmeData = await fetchMsmeUpdates();
+    
+    // Batch weather and news by industry/city to avoid duplicate calls
+    const uniqueCities = Array.from(new Set(suppliers.map(s => s.city)));
+    const uniqueIndustries = Array.from(new Set(suppliers.map(s => s.industry)));
+    
+    const weatherMap: Record<string, any> = {};
+    const newsMap: Record<string, any> = {};
+
+    await Promise.all([
+      ...uniqueCities.map(async city => {
+        weatherMap[city] = await fetchWeather(city);
+      }),
+      ...uniqueIndustries.map(async ind => {
+        newsMap[ind] = await fetchNews(ind);
+      })
+    ]);
+
+    // 2. AI-Powered Analysis via Gemini
+    const suppliersJson = JSON.stringify(suppliers.map(s => ({
+      id: s.id,
+      name: s.name,
+      city: s.city,
+      industry: s.industry,
+      score: s.score
+    })));
+
+    const weatherJson = JSON.stringify(weatherMap);
+    const newsJson = JSON.stringify(newsMap);
+    const economicsJson = JSON.stringify(economics);
+
+    const prompt = `You are TrustGraph AI's Real-Time Risk Intelligence Engine. Analyze the following real-time data and provide risk assessments for the supplier portfolio.
+CURRENT SUPPLIER PORTFOLIO:
+${suppliersJson}
+REAL-TIME EXTERNAL DATA:
+- Weather: ${weatherJson}
+- News Alerts: ${newsJson}  
+- Economic Indicators: ${economicsJson}
+
+TASK: For each supplier, calculate:
+1. Delivery reliability adjustment based on weather conditions (e.g., severe heat, rain, or storms causing delays).
+2. Additional risk from recent news about their industry (disruptions, strikes, shortages).
+3. Overall risk score adjustment (add/subtract points between -10 and +5).
+4. Priority action items (max 2 per supplier).
+
+Return ONLY valid JSON with this exact structure:
+{
+  "supplierAdjustments": [
+    {
+      "supplierId": "A",
+      "scoreAdjustment": -3,
+      "weatherImpact": "Clear skies improving delivery / Rain causing delays etc.",
+      "newsRisk": "New regulatory issue / Supply disruption alert etc.",
+      "economicRisk": "Inflation increasing costs / GDP growth positive etc.",
+      "priorityActions": ["action1", "action2"],
+      "alertType": "mild/moderate/critical"
+    }
+  ],
+  "systemAlert": {
+    "level": "low/Medium/High/Critical",
+    "message": "Summary of overall situation"
+  }
+}`;
+
+    const aiAnalysis = await safeGeminiGenerate("gemini-3.7-flash", {
+      contents: prompt,
+      config: { responseMimeType: "application/json" }
+    });
+
+    let adjustments: any[] = [];
+    if (aiAnalysis && aiAnalysis.text) {
+      try {
+        const parsed = JSON.parse(aiAnalysis.text);
+        adjustments = parsed.supplierAdjustments || [];
+      } catch (e) {
+        console.error("Failed to parse AI adjustments JSON:", e);
+      }
+    }
+
+    // 3. Update Suppliers
+    suppliers = suppliers.map(s => {
+      const adj = adjustments.find(a => a.supplierId === s.id);
+      const weather = weatherMap[s.city];
+      const news = newsMap[s.industry];
+      
+      if (adj) {
+        // Apply score adjustment
+        let newScore = s.score + (adj.scoreAdjustment || 0);
+        newScore = Math.max(10, Math.min(99, newScore));
+        
+        // Update risk level based on new score
+        let riskLevel: Supplier["risk"] = s.risk;
+        let riskColor = s.riskColor;
+        let riskIcon = s.riskIcon;
+
+        if (newScore >= 85) { riskLevel = "Very Low Risk"; riskColor = "emerald"; riskIcon = "check_circle"; }
+        else if (newScore >= 70) { riskLevel = "Low Risk"; riskColor = "green"; riskIcon = "check_circle"; }
+        else if (newScore >= 50) { riskLevel = "Medium Risk"; riskColor = "yellow"; riskIcon = "warning"; }
+        else if (newScore >= 35) { riskLevel = "High Risk"; riskColor = "red"; riskIcon = "alert"; }
+        else { riskLevel = "Critical Risk"; riskColor = "error"; riskIcon = "alert"; }
+
+        return {
+          ...s,
+          score: newScore,
+          risk: riskLevel,
+          riskColor,
+          riskIcon,
+          realTimeData: {
+            weather: weather ? {
+              temp: weather.temp,
+              condition: weather.condition,
+              impact: adj.weatherImpact || "Stable",
+              fetchedAt: weather.fetchedAt
+            } : undefined,
+            news: news ? news.map((n: any) => ({
+              headline: n.headline,
+              risk: adj.newsRisk || "Low",
+              publishedAt: n.publishedAt
+            })) : undefined,
+            economicImpact: economics?.indicator ? `${economics.indicator}: ${economics.value}` : undefined,
+            lastRefresh: new Date().toISOString()
+          }
+        };
+      }
+      return s;
+    });
+
+    lastRefreshTime = new Date().toISOString();
+    const duration = Date.now() - startTime;
+
+    if (dbInstance) {
+      await dbInstance.collection("refreshLogs").add({
+        status: "success",
+        duration,
+        timestamp: FieldValue.serverTimestamp(),
+        summary: `Refreshed ${suppliers.length} suppliers`
+      });
+    }
+
+    res.json({
+      status: "success",
+      fetchDuration: duration,
+      data: {
+        weatherCount: Object.keys(weatherMap).length,
+        industryNewsCount: Object.keys(newsMap).length,
+        economics,
+        adjustmentsCount: adjustments.length
+      },
+      nextFetch: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString()
+    });
+
+  } catch (err: any) {
+    console.error("Refresh failed:", err);
+    if (dbInstance) {
+      await dbInstance.collection("refreshLogs").add({
+        status: "failed",
+        error: err.message,
+        timestamp: FieldValue.serverTimestamp()
+      });
+    }
+    res.status(500).json({ status: "failed", error: err.message });
+  }
 });
 
 // GET Network Graph (3D nodes & multi-tier edges)

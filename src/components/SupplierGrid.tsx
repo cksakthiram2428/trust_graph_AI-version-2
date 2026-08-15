@@ -172,7 +172,15 @@ export const SupplierGrid: React.FC<SupplierGridProps> = ({
                         >
                           {supplier.tier}
                         </motion.span>
-                        {supplier.dataSource === "real_registration" ? (
+                        {supplier.realTimeData ? (
+                          <motion.span 
+                            whileHover={{ scale: 1.1 }}
+                            className="px-2 py-0.5 rounded-md text-[9px] font-mono uppercase bg-sky-500/10 dark:bg-sky-500/20 border border-sky-500/30 text-sky-700 dark:text-sky-300 font-bold shadow-xs inline-block animate-pulse"
+                          >
+                            <Zap className="w-2.5 h-2.5 inline-block mr-1 -mt-0.5" />
+                            Real-time AI Synced
+                          </motion.span>
+                        ) : supplier.dataSource === "real_registration" ? (
                           <motion.span 
                             whileHover={{ scale: 1.1 }}
                             className="px-2 py-0.5 rounded-md text-[9px] font-mono uppercase bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 font-bold shadow-xs inline-block" 
