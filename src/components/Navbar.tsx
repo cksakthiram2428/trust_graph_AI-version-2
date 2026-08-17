@@ -107,20 +107,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">
-                TRUSTGRAPH<span className="text-cyan-500">.AI</span>
+                TRUSTGRAPH<span className="text-cyan-700 dark:text-cyan-400">.AI</span>
               </span>
-              <span className="text-[9px] text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-tight mt-0.5">
+              <span className="text-[9px] text-slate-600 dark:text-slate-400 uppercase tracking-widest leading-tight mt-0.5">
                 CONTAGION DEFENSE OS
               </span>
             </div>
           </div>
 
           {/* Fixed Telemetry Status Chip */}
-          <div className="hidden md:flex items-center gap-2 px-2 py-1 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] text-[10px] text-slate-500 dark:text-slate-400">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          <div className="hidden md:flex items-center gap-2 px-2 py-1 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] text-[10px] text-slate-700 dark:text-slate-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
             <span>SYS: ONLINE</span>
             <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="text-amber-600 dark:text-amber-400">MSMED: SEC 15/16</span>
+            <span className="text-amber-700 dark:text-amber-400 font-semibold">MSMED: SEC 15/16</span>
           </div>
         </div>
 
@@ -190,7 +190,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               sound.playClick();
               onOpenCopilot();
             }}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 hover:bg-cyan-500/20 text-xs font-bold transition-all cursor-pointer"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-cyan-600/40 bg-cyan-600/10 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-600/20 text-xs font-bold transition-all cursor-pointer"
             title="Open Gemini AI Forensic Copilot (⌘K)"
           >
             <Bot className="w-3.5 h-3.5" />
@@ -239,7 +239,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   sound.playClick();
                   onLogout();
                 }}
-                className="hidden xl:flex items-center gap-1 px-2.5 py-1.5 rounded border border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 text-xs font-bold transition-colors cursor-pointer"
+                className="hidden xl:flex items-center gap-1 px-2.5 py-1.5 rounded border border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400 hover:bg-rose-500/20 text-xs font-bold transition-colors cursor-pointer"
                 title="Sign out of command session"
               >
                 <LogOut className="w-3 h-3" />
@@ -257,8 +257,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <div className="p-2 border-b border-slate-100 dark:border-[#1C2433] space-y-0.5">
                       <div className="font-bold text-slate-900 dark:text-white truncate">{user.name}</div>
-                      <div className="text-[10px] text-slate-400 truncate">{user.email}</div>
-                      <div className="text-[9px] text-cyan-600 dark:text-cyan-400 font-bold">{user.role}</div>
+                      <div className="text-[10px] text-slate-600 dark:text-slate-400 truncate">{user.email}</div>
+                      <div className="text-[9px] text-cyan-700 dark:text-cyan-400 font-bold">{user.role}</div>
                     </div>
 
                     <div className="mt-1 space-y-0.5">
@@ -292,7 +292,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setIsUserMenuOpen(false);
                           onLogout();
                         }}
-                        className="w-full px-2.5 py-2 rounded text-left bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center gap-2 font-bold border border-rose-500/20"
+                        className="w-full px-2.5 py-2 rounded text-left bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 flex items-center gap-2 font-bold border border-rose-500/20"
                       >
                         <LogOut className="w-3.5 h-3.5" />
                         <span>Terminate Session [Logout]</span>

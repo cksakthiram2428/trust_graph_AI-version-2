@@ -38,6 +38,9 @@ export const VideoBackground: React.FC<VideoBackgroundProps> = ({
           loop
           muted
           playsInline
+          aria-hidden="true"
+          title="Ambient background animation"
+          preload="metadata"
           onLoadedData={() => setIsVideoLoaded(true)}
           className={`w-full h-full object-cover scale-105 transition-opacity duration-700 ${getBlurClass()} ${
             isVideoLoaded ? "opacity-60 dark:opacity-40" : "opacity-0"

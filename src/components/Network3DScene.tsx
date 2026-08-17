@@ -513,6 +513,8 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
         <div className="relative">
           <select
             id="filter-tier-select"
+            aria-label="Filter by supply chain tier"
+            title="Filter by supply chain tier"
             value={filterTier}
             onChange={(e) => { sound.playClick(); setFilterTier(e.target.value); }}
             className="px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-[#0A0A0C]/85 backdrop-blur-md border border-white/10 text-[10px] sm:text-xs text-slate-200 focus:outline-none focus:border-[#38BDF8] font-mono cursor-pointer"
@@ -528,6 +530,8 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
         <div>
           <select
             id="filter-risk-select"
+            aria-label="Filter by risk level"
+            title="Filter by risk level"
             value={filterRisk}
             onChange={(e) => { sound.playClick(); setFilterRisk(e.target.value); }}
             className="px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-slate-900/85 backdrop-blur-md border border-slate-700 text-[10px] sm:text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono cursor-pointer"

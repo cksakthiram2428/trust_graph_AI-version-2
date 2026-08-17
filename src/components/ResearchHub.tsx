@@ -44,14 +44,14 @@ export const ResearchHub: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-sky-500 dark:bg-cyan-400 animate-ping" />
-            <span className="text-xs font-mono text-sky-600 dark:text-cyan-400 uppercase tracking-wider font-bold">
+            <span className="text-xs font-mono text-sky-700 dark:text-cyan-400 uppercase tracking-wider font-bold">
               MSME Intelligence &amp; Neural Scoring Framework
             </span>
           </div>
           <h2 className="mt-1 text-lg sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight font-display">
             How TrustGraph AI Evaluates &amp; Protects Supply Chains
           </h2>
-          <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 max-w-2xl font-sans leading-relaxed">
+          <p className="text-xs text-slate-700 dark:text-slate-300 mt-1 max-w-2xl font-sans leading-relaxed">
             Our multi-layer graph model combines operational fulfillment telemetry, payment delay metrics, and quality control audits into an explainable 0–100 composite trust index.
           </p>
         </div>
@@ -67,8 +67,8 @@ export const ResearchHub: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="p-4 rounded-2xl bg-white dark:bg-[#0E0E12] border border-sky-200 dark:border-cyan-500/20 shadow-sm transition-colors">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-bold text-sky-600 dark:text-cyan-400 uppercase tracking-wider">Weight: 40%</span>
-            <Activity className="w-4 h-4 text-sky-500 dark:text-cyan-400" />
+            <span className="font-mono text-xs font-bold text-sky-700 dark:text-cyan-400 uppercase tracking-wider">Weight: 40%</span>
+            <Activity className="w-4 h-4 text-sky-600 dark:text-cyan-400" />
           </div>
           <h3 className="mt-2 font-bold text-sm text-slate-900 dark:text-white font-display">Delivery Reliability</h3>
           <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
@@ -78,8 +78,8 @@ export const ResearchHub: React.FC = () => {
 
         <div className="p-4 rounded-2xl bg-white dark:bg-[#0E0E12] border border-emerald-200 dark:border-emerald-500/20 shadow-sm transition-colors">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Weight: 35%</span>
-            <ShieldCheck className="w-4 h-4 text-emerald-500 dark:text-emerald-400" />
+            <span className="font-mono text-xs font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider">Weight: 35%</span>
+            <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <h3 className="mt-2 font-bold text-sm text-slate-900 dark:text-white font-display">Quality Acceptance</h3>
           <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
@@ -89,8 +89,8 @@ export const ResearchHub: React.FC = () => {
 
         <div className="p-4 rounded-2xl bg-white dark:bg-[#0E0E12] border border-amber-200 dark:border-amber-500/20 shadow-sm transition-colors">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Weight: High Penalty</span>
-            <AlertCircle className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+            <span className="font-mono text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider">Weight: High Penalty</span>
+            <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           </div>
           <h3 className="mt-2 font-bold text-sm text-slate-900 dark:text-white font-display">Payment Settlement Lag</h3>
           <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
@@ -100,8 +100,8 @@ export const ResearchHub: React.FC = () => {
 
         <div className="p-4 rounded-2xl bg-white dark:bg-[#0E0E12] border border-rose-200 dark:border-rose-500/20 shadow-sm transition-colors">
           <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-bold text-rose-600 dark:text-rose-400 uppercase tracking-wider">Weight: High Penalty</span>
-            <AlertCircle className="w-4 h-4 text-rose-500 dark:text-rose-400" />
+            <span className="font-mono text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider">Weight: High Penalty</span>
+            <AlertCircle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
           </div>
           <h3 className="mt-2 font-bold text-sm text-slate-900 dark:text-white font-display">Unresolved Grievances</h3>
           <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 font-sans leading-relaxed">
@@ -139,10 +139,10 @@ export const ResearchHub: React.FC = () => {
               </div>
 
               <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-xs font-mono">
-                <span className="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">
+                <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold">
                   {item.impact}
                 </span>
-                <span className="text-[10px] text-slate-500 dark:text-slate-400">Verified Case</span>
+                <span className="text-[10px] text-slate-600 dark:text-slate-400">Verified Case</span>
               </div>
             </div>
           ))}

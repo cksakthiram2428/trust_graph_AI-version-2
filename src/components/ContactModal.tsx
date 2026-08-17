@@ -55,6 +55,9 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md">
       <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Contact TrustGraph AI Headquarters"
         initial={{ opacity: 0, scale: 0.94, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.94, y: 20 }}
@@ -78,6 +81,8 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
               sound.playClick();
               onClose();
             }}
+            aria-label="Close contact modal"
+            title="Close contact modal"
             className="p-2 rounded-xl text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -129,10 +134,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
+                <label htmlFor="contact-full-name" className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
                   Full Name <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="contact-full-name"
+                  aria-label="Full Name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -141,10 +148,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
+                <label htmlFor="contact-work-email" className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
                   Work Email <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="contact-work-email"
+                  aria-label="Work Email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -155,10 +164,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="contact-company-name" className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
                 Company / Organization Name
               </label>
               <input
+                id="contact-company-name"
+                aria-label="Company or Organization Name"
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
@@ -168,10 +179,12 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
+              <label htmlFor="contact-inquiry-message" className="text-xs font-mono font-medium text-slate-700 dark:text-slate-300">
                 Procurement / Risk Inquiry <span className="text-rose-500">*</span>
               </label>
               <textarea
+                id="contact-inquiry-message"
+                aria-label="Procurement or Risk Inquiry"
                 rows={3}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
@@ -184,6 +197,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
               <button
                 type="button"
                 onClick={onClose}
+                aria-label="Cancel inquiry"
                 className="px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 text-xs font-mono cursor-pointer"
               >
                 Cancel
@@ -191,6 +205,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose, onS
               <button
                 type="submit"
                 disabled={isSubmitting}
+                aria-label="Send Inquiry"
                 className="px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 disabled:opacity-50 text-white text-xs font-mono font-bold flex items-center gap-2 transition-all shadow-md shadow-sky-500/25 cursor-pointer"
               >
                 <Send className="w-3.5 h-3.5" />

@@ -22,7 +22,7 @@ export const FloatingAIAgentButton: React.FC<FloatingAIAgentButtonProps> = ({
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex items-center gap-3">
+    <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-40 flex items-center gap-3">
       {/* Interactive Tooltip on Hover */}
       <AnimatePresence>
         {isHovered && !isOpen && (
@@ -52,7 +52,10 @@ export const FloatingAIAgentButton: React.FC<FloatingAIAgentButtonProps> = ({
         whileTap={{ scale: 0.92 }}
         className="relative group w-14 h-14 rounded-full flex items-center justify-center bg-gradient-to-tr from-sky-500 via-cyan-400 to-indigo-500 text-slate-950 p-[2px] shadow-2xl shadow-sky-500/30 hover:shadow-cyan-400/50 transition-shadow cursor-pointer"
         title="Open Multi-Model AI Risk Copilot"
-        aria-label="AI Risk Copilot"
+        aria-label={isOpen ? "Close AI Risk Copilot" : "Open Multi-Model AI Risk Copilot"}
+        aria-expanded={isOpen}
+        aria-controls="ai-copilot-drawer"
+        aria-haspopup="dialog"
       >
         {/* Pulsing Aura Ring */}
         <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-sky-400 to-cyan-300 animate-ping opacity-25 group-hover:opacity-40" />

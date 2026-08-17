@@ -48,6 +48,17 @@
   }
 }
 
+/* Mobile Sticky CTA Accessibility */
+.sticky-mobile-cta {
+  padding: 12px !important;
+}
+
+.sticky-mobile-cta a,
+.sticky-mobile-cta button {
+  min-height: 44px !important;
+  min-width: 44px !important;
+}
+
 /* Typography Hierarchy */
 .font-display {
   font-family: 'Syne', sans-serif;

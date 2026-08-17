@@ -48,6 +48,8 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacy }) => 
   return (
     <AnimatePresence>
       <motion.div
+        role="region"
+        aria-label="Privacy and data consent banner"
         initial={{ opacity: 0, y: 50, scale: 0.96 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         exit={{ opacity: 0, y: 50, scale: 0.96 }}
@@ -66,6 +68,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacy }) => 
                 onClick={handleAcceptEssential}
                 className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors cursor-pointer"
                 title="Dismiss with Essential only"
+                aria-label="Dismiss banner with essential cookies only"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -88,6 +91,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacy }) => 
                       type="checkbox"
                       checked={analyticsEnabled}
                       onChange={(e) => setAnalyticsEnabled(e.target.checked)}
+                      aria-label="Enable anonymized risk telemetry"
                       className="sr-only peer"
                     />
                     <div className="w-8 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-sky-500"></div>
@@ -100,6 +104,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacy }) => 
               {showPreferences ? (
                 <button
                   onClick={handleSaveCustom}
+                  aria-label="Save cookie consent choices"
                   className="px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-mono text-xs font-bold transition-colors cursor-pointer"
                 >
                   Save Choices
@@ -108,18 +113,21 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacy }) => 
                 <>
                   <button
                     onClick={handleAcceptAll}
+                    aria-label="Accept all cookies"
                     className="px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-mono text-xs font-bold transition-colors cursor-pointer shadow-sm shadow-sky-500/20"
                   >
                     Accept All
                   </button>
                   <button
                     onClick={handleAcceptEssential}
+                    aria-label="Accept essential cookies only"
                     className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-300 font-mono text-xs transition-colors cursor-pointer"
                   >
                     Essential Only
                   </button>
                   <button
                     onClick={() => setShowPreferences(true)}
+                    aria-label="Customize cookie preferences"
                     className="text-[11px] text-sky-400 hover:underline font-mono px-1.5 py-1 cursor-pointer"
                   >
                     Customize
@@ -133,6 +141,7 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ onOpenPrivacy }) => 
                     sound.playClick();
                     onOpenPrivacy();
                   }}
+                  aria-label="View Privacy Policy details"
                   className="text-[11px] text-slate-400 hover:text-white underline font-mono ml-auto cursor-pointer"
                 >
                   Policy Details
