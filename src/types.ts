@@ -38,6 +38,16 @@ export interface Supplier {
     }[];
     economicImpact?: string;
     lastRefresh?: string;
+    scoreAdjustment?: number;
+    alertType?: "low" | "medium" | "high" | "critical";
+    intelligenceDrawer?: {
+      weatherImpact: string;
+      newsRisk: string;
+      macroOutlook: string;
+      regulatoryStatus: string;
+    };
+    cascadeNarrative?: string;
+    priorityActions?: string[];
   };
 }
 

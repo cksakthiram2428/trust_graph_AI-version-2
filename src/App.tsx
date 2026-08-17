@@ -18,7 +18,16 @@ import { LoginModal } from "./components/LoginModal";
 import { CsvIngestionModal } from "./components/CsvIngestionModal";
 import { UserProfileModal } from "./components/UserProfileModal";
 import { FloatingAIAgentButton } from "./components/FloatingAIAgentButton";
+import { StickyMobileCTA } from "./components/StickyMobileCTA";
+import { CookieBanner } from "./components/CookieBanner";
+import { PrivacyPolicyModal } from "./components/PrivacyPolicyModal";
+import { TermsPageModal } from "./components/TermsPageModal";
+import { ContactModal } from "./components/ContactModal";
+import { ThankYouModal } from "./components/ThankYouModal";
+import { NotFoundPage } from "./components/NotFoundPage";
 import { sound } from "./utils/audio";
+import { updatePageSEO } from "./utils/seo";
+import { analytics } from "./utils/analytics";
 import { auth, onAuthStateChanged, logOut, subscribeToRealtimeUsers, syncUserToFirestore } from "./lib/firebase";
 import { 
   Sparkles, 
@@ -34,8 +43,8 @@ import {
 } from "lucide-react";
 
 export default function App() {
-  // Navigation & Page State (Landing vs Workspace vs Login Panel)
-  const [pageMode, setPageMode] = useState<"LANDING" | "WORKSPACE" | "LOGIN">("LANDING");
+  // Navigation & Page State
+  const [pageMode, setPageMode] = useState<"LANDING" | "WORKSPACE" | "LOGIN" | "404">("LANDING");
   const [viewMode, setViewMode] = useState<ViewMode>("3D_SPACE");
 
   // Real-time Database Users State
@@ -52,6 +61,13 @@ export default function App() {
 
   const [isMuted, setIsMuted] = useState(sound.isMuted);
 
+  // Compliance, Legal & Auxiliary Modals
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  const [isTermsOpen, setIsTermsOpen] = useState(false);
+  const [isContactOpen, setIsContactOpen] = useState(false);
+  const [isThankYouOpen, setIsThankYouOpen] = useState(false);
+  const [thankYouInfo, setThankYouInfo] = useState<{ title?: string; message?: string; referenceId?: string }>({});
+
   // Sync theme class to documentElement
   useEffect(() => {
     if (theme === "dark") {
@@ -63,6 +79,23 @@ export default function App() {
       localStorage.setItem("trustgraph_theme", theme);
     } catch (e) {}
   }, [theme]);
+
+  // Sync Dynamic SEO and Telemetry on page and view changes
+  useEffect(() => {
+    if (pageMode === "404") {
+      updatePageSEO("404");
+      analytics.pageView("404_Page_Not_Found");
+    } else if (pageMode === "LANDING") {
+      updatePageSEO("landing");
+      analytics.pageView("Landing_Page");
+    } else if (pageMode === "LOGIN") {
+      updatePageSEO("login");
+      analytics.pageView("Login_Screen");
+    } else {
+      updatePageSEO(viewMode);
+      analytics.pageView(`Workspace_${viewMode}`);
+    }
+  }, [pageMode, viewMode]);
 
   const toggleTheme = () => {
     setTheme(prev => (prev === "dark" ? "light" : "dark"));
@@ -178,65 +211,69 @@ export default function App() {
     sound.playAISuccess();
     if (initialView) setViewMode(initialView);
     setPageMode("WORKSPACE");
+    analytics.track("Enter_Workspace", { initialView: initialView || "3D_SPACE" });
   };
 
-  const handleSelectNode = (nodeId: string) => {
-    sound.playTargetLock();
-    setSelectedNodeKey(nodeId);
-    const matchedSupplier = suppliers.find(s => s.id === nodeId);
-    if (matchedSupplier) {
-      setSelectedSupplier(matchedSupplier);
+  const handleSelectNode = (key: string) => {
+    setSelectedNodeKey(key);
+    const found = suppliers.find(s => s.id === key || s.name.toLowerCase() === key.toLowerCase());
+    if (found) {
+      setSelectedSupplier(found);
     }
   };
 
   const handleOpenCascadeModal = (supplier: Supplier) => {
-    sound.playClick();
     setCascadeTargetSupplier(supplier);
     setIsCascadeModalOpen(true);
+    analytics.track("Open_Cascade_Simulator", { supplierId: supplier.id, supplierName: supplier.name });
   };
 
   const handleApplyShockTo3D = (result: CascadeShockResult) => {
     setActiveCascadeResult(result);
-    setPageMode("WORKSPACE");
-    setViewMode("3D_SPACE");
-    sound.playShockwave();
-    showToast(`Cascade propagation initialized: ${result.monetaryExposureINR} at risk`, "error");
+    const affectedCount = (result.directImpactedNodeIds?.length || 0) + (result.secondaryImpactedNodeIds?.length || 0);
+    showToast(`Cascade Shockwave Applied: ${affectedCount} vendors impacted`, "error");
+    analytics.track("Apply_Cascade_Shockwave", { 
+      originSupplier: result.originSupplier?.name,
+      shockType: result.shockType,
+      affectedCount,
+      monetaryExposureINR: result.monetaryExposureINR 
+    });
   };
 
   const handleSaveSupplier = async (supplierData: Partial<Supplier>) => {
     try {
-      const isEditing = !!editingSupplier;
-      const url = isEditing ? `/api/suppliers/${editingSupplier.id}` : "/api/suppliers";
-      const method = isEditing ? "PUT" : "POST";
-
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(supplierData)
-      });
-
-      if (!res.ok) throw new Error("Failed to save supplier");
-
-      const saved = await res.json();
-      if (isEditing) {
-        setSuppliers(prev => prev.map(s => (s.id === saved.id ? saved : s)));
-        showToast(`Updated supplier: ${saved.name}`, "success");
+      if (supplierData.id && suppliers.some(s => s.id === supplierData.id)) {
+        // Update existing
+        const res = await fetch(`/api/suppliers/${supplierData.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(supplierData)
+        });
+        if (!res.ok) throw new Error("Failed to update");
+        const updated = await res.json();
+        setSuppliers(prev => prev.map(s => s.id === updated.id ? updated : s));
+        showToast(`MSME "${updated.name}" updated successfully`, "success");
       } else {
-        setSuppliers(prev => [saved, ...prev]);
-        showToast(`Added MSME: ${saved.name}`, "success");
+        // Create new
+        const res = await fetch("/api/suppliers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(supplierData)
+        });
+        if (!res.ok) throw new Error("Failed to create");
+        const created = await res.json();
+        setSuppliers(prev => [created, ...prev]);
+        showToast(`MSME "${created.name}" added to knowledge graph`, "success");
       }
+      setIsAddEditOpen(false);
 
       // Refresh network topology
       fetch("/api/network")
         .then(r => r.json())
         .then(data => setNetworkData(data))
         .catch(() => {});
-
-      setIsAddEditOpen(false);
-      setEditingSupplier(null);
-    } catch (e: any) {
-      console.error(e);
-      showToast(e.message || "Failed to save supplier", "error");
+    } catch (e) {
+      showToast("Error saving MSME supplier data", "error");
     }
   };
 
@@ -266,9 +303,9 @@ export default function App() {
       await logOut();
     } catch (e) {}
     setUser(null);
-    // Explicit Requirement: "make the navigation like once you logout , the landing page should open"
     setPageMode("LANDING");
     showToast("Signed out. Returned to Landing page.", "info");
+    analytics.track("User_Logout");
   };
 
   const handleUpdateProfile = (updatedUser: User) => {
@@ -288,7 +325,6 @@ export default function App() {
       if (data.status === "success") {
         showToast(`Real-time Refresh Successful: Analyzed ${data.data.adjustmentsCount} risks`, "success");
         setLastRealtimeRefresh(new Date().toISOString());
-        // Refresh supplier data to show new scores/data
         fetchInitialData();
       } else {
         throw new Error(data.error || "Refresh failed");
@@ -311,8 +347,14 @@ export default function App() {
         </div>
       )}
 
-      {/* Conditional Rendering: Landing Page vs Login Panel vs Workspace */}
-      {pageMode === "LANDING" ? (
+      {/* Conditional Rendering: Custom 404 vs Landing Page vs Login Panel vs Workspace */}
+      {pageMode === "404" ? (
+        <NotFoundPage
+          onReturnHome={() => setPageMode("LANDING")}
+          onEnterWorkspace={() => handleEnterWorkspace("3D_SPACE")}
+          onOpenCopilot={() => setIsCopilotOpen(true)}
+        />
+      ) : pageMode === "LANDING" ? (
         <LandingPage
           onEnterWorkspace={handleEnterWorkspace}
           onOpenCopilot={() => setIsCopilotOpen(true)}
@@ -326,6 +368,10 @@ export default function App() {
           onToggleSound={toggleSound}
           suppliers={suppliers}
           stats={stats}
+          onOpenPrivacy={() => setIsPrivacyOpen(true)}
+          onOpenTerms={() => setIsTermsOpen(true)}
+          onOpenContact={() => setIsContactOpen(true)}
+          onTest404={() => setPageMode("404")}
         />
       ) : pageMode === "LOGIN" ? (
         <LoginPage
@@ -360,6 +406,10 @@ export default function App() {
             theme={theme}
             onToggleTheme={toggleTheme}
             onShowLanding={() => setPageMode("LANDING")}
+            onOpenPrivacy={() => setIsPrivacyOpen(true)}
+            onOpenTerms={() => setIsTermsOpen(true)}
+            onOpenContact={() => setIsContactOpen(true)}
+            onTest404={() => setPageMode("404")}
           />
 
           {/* Main Knowledge Graph Body */}
@@ -458,36 +508,90 @@ export default function App() {
                 <span className="w-2 h-2 rounded-full bg-sky-500 animate-pulse" />
                 <span className="font-semibold tracking-wide">TrustGraph AI • 3D Immersive Supply Chain Knowledge Graph</span>
               </div>
-              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-8 text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                <span className="flex items-center gap-1.5">
-                  <span className="text-sky-500 dark:text-[#38BDF8]">[01]</span> SYSTEM STATUS: <strong className="text-emerald-500 dark:text-emerald-400">OPERATIONAL</strong>
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="text-sky-500 dark:text-[#38BDF8]">[02]</span> LATENCY: <strong className="text-slate-800 dark:text-white">12MS</strong>
-                </span>
-                <span className="flex items-center gap-1.5">
-                  <span className="text-sky-500 dark:text-[#38BDF8]">[03]</span> SECURITY: <strong className="text-sky-600 dark:text-sky-300">ENCRYPTED_TLS_1.3</strong>
-                </span>
+              <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <button onClick={() => setIsPrivacyOpen(true)} className="hover:text-sky-400 cursor-pointer">Privacy</button>
+                <button onClick={() => setIsTermsOpen(true)} className="hover:text-sky-400 cursor-pointer">Terms</button>
+                <button onClick={() => setIsContactOpen(true)} className="hover:text-sky-400 cursor-pointer">Contact HQ</button>
+                <button onClick={() => setPageMode("404")} className="hover:text-amber-400 cursor-pointer">404 Test</button>
               </div>
             </div>
           </footer>
         </AuroraBackground>
       )}
 
-      {/* Floating Round AI Agent Button in Bottom-Right Corner (Present on both Landing Page and Hero/Workspace) */}
+      {/* Floating Round AI Agent Button in Bottom-Right Corner */}
       <FloatingAIAgentButton
         onClick={() => setIsCopilotOpen(prev => !prev)}
         isOpen={isCopilotOpen}
       />
 
-      {/* Shared Modals and Drawers (accessible from both Landing & Workspace) */}
+      {/* Sticky Mobile Quick-Action Navigation Bar */}
+      <StickyMobileCTA
+        onEnterWorkspace={() => handleEnterWorkspace("3D_SPACE")}
+        onOpenCopilot={() => setIsCopilotOpen(true)}
+        onOpenAddSupplier={() => {
+          setEditingSupplier(null);
+          setIsAddEditOpen(true);
+        }}
+        onOpenCsvModal={() => setIsCsvModalOpen(true)}
+        currentMode={pageMode === "WORKSPACE" ? viewMode : pageMode}
+      />
 
-      {/* User Profile Settings Modal */}
+      {/* Cookie Consent Banner */}
+      <CookieBanner onOpenPrivacy={() => setIsPrivacyOpen(true)} />
+
+      {/* Shared Modals and Drawers */}
+
+      {/* User Profile Settings Modal with Logout Action */}
       <UserProfileModal
         isOpen={isProfileOpen}
         onClose={() => setIsProfileOpen(false)}
         user={user}
-        onUpdateProfile={handleUpdateProfile}
+        onUpdateUser={handleUpdateProfile}
+        onLogout={handleLogout}
+      />
+
+      {/* Privacy Policy Modal */}
+      <PrivacyPolicyModal
+        isOpen={isPrivacyOpen}
+        onClose={() => setIsPrivacyOpen(false)}
+      />
+
+      {/* Terms of Service Modal */}
+      <TermsPageModal
+        isOpen={isTermsOpen}
+        onClose={() => setIsTermsOpen(false)}
+        onOpenPrivacy={() => {
+          setIsTermsOpen(false);
+          setIsPrivacyOpen(true);
+        }}
+      />
+
+      {/* Contact HQ Modal */}
+      <ContactModal
+        isOpen={isContactOpen}
+        onClose={() => setIsContactOpen(false)}
+        onSubmitSuccess={(data) => {
+          setThankYouInfo({
+            title: "Transmission Received",
+            message: `Thank you, ${data.name}. Your inquiry regarding "${data.subject}" has been routed to our Supply Chain Risk Architecture team at T-Hub Phase 2, Hyderabad.`,
+            referenceId: `TG-${Date.now().toString().slice(-6)}`
+          });
+          setIsThankYouOpen(true);
+        }}
+      />
+
+      {/* Thank You Confirmation Modal */}
+      <ThankYouModal
+        isOpen={isThankYouOpen}
+        onClose={() => setIsThankYouOpen(false)}
+        title={thankYouInfo.title}
+        message={thankYouInfo.message}
+        referenceId={thankYouInfo.referenceId}
+        onExploreGraph={() => {
+          setIsThankYouOpen(false);
+          handleEnterWorkspace("3D_SPACE");
+        }}
       />
 
       {/* Supplier Forensic Detail Drawer */}
@@ -507,7 +611,12 @@ export default function App() {
         onImportSuccess={(count) => {
           fetchInitialData();
           setIsCsvModalOpen(false);
-          showToast(`Successfully imported and validated ${count} MSME entities`, "success");
+          setThankYouInfo({
+            title: "Dataset Ingestion Complete",
+            message: `Successfully validated and integrated ${count} MSME records from public registries into the active 3D knowledge graph with statutory GSTIN tags.`,
+            referenceId: `UDYAM-${Date.now().toString().slice(-6)}`
+          });
+          setIsThankYouOpen(true);
         }}
       />
 

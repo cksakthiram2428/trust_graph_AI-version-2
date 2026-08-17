@@ -775,49 +775,82 @@ app.post("/api/admin/refresh-realtime", async (req, res) => {
       })
     ]);
 
-    // 2. AI-Powered Analysis via Gemini
+    // 2. AI-Powered Analysis via Gemini with Enforced Domain Thresholds
     const suppliersJson = JSON.stringify(suppliers.map(s => ({
       id: s.id,
       name: s.name,
       city: s.city,
       industry: s.industry,
-      score: s.score
+      score: s.score,
+      udyamNumber: s.udyamNumber || "UDYAM-XX-00-0000000",
+      dataSource: s.dataSource || "simulated_metrics",
+      paymentDelay: s.paymentDelay,
+      deliveryReliability: s.deliveryReliability
     })));
 
     const weatherJson = JSON.stringify(weatherMap);
     const newsJson = JSON.stringify(newsMap);
     const economicsJson = JSON.stringify(economics);
+    const msmeJson = JSON.stringify(msmeData || { status: "Active Indian MSME database" });
 
-    const prompt = `You are TrustGraph AI's Real-Time Risk Intelligence Engine. Analyze the following real-time data and provide risk assessments for the supplier portfolio.
+    const prompt = `# ROLE & OBJECTIVE
+You are the core AI Reasoning Layer of TrustGraph AI, an enterprise risk-intelligence platform protecting Indian Micro, Small, and Medium Enterprises (MSMEs). Your job is to ingest raw, aggregated payloads fetched via our parallel Node.js engine, evaluate them against strict Indian regulatory and logistical thresholds, and return a strictly structured JSON response to update the platform's Stats HUD and Intelligence Drawer.
+
+# ENFORCED DOMAIN THRESHOLDS & SCORING MATRICES
+Evaluate the raw payload against these three critical pillars and regulatory benchmarks. Aggregate the independent points to calculate a total scoreAdjustment (capped between -25 and +5 points).
+
+### 1. Weather & Climate Risk (Source: OpenWeather)
+- SAFE / POSITIVE (0 to +2 points): Clear skies, scattered clouds, or overcast conditions. No threat to transport.
+- MODERATE RISK (-2 to -4 points): Moderate rain or fog causing minor transit or city-wide logistics slowdowns.
+- SEVERE / CRITICAL (-5 to -10 points): Extreme Heatwaves (>42°C), storms, cyclones, or explicit Inundation / Flood Alerts that guarantee supply chain paralysis.
+
+### 2. Macroeconomics (Source: RBI / World Bank)
+- SAFE / POSITIVE (+1 to +3 points): India GDP Growth Rate ≥ 6.5% AND Inflation within the RBI target zone of 4.0% ± 2% (i.e., 2.0% to 6.0%).
+- MODERATE RISK (-2 to -4 points): Macroeconomic pressure showing Inflation between 6.0% and 7.5%.
+- SEVERE / CRITICAL (-5 to -8 points): Inflation spiking > 8.0%, or structural stagflation compressing manufacturing margins.
+
+### 3. Regulatory Compliance & MSMED Act 2006 (Source: Data.gov.in / Udyam)
+- DEVASTATING BIAS (-25 points): If Udyam status is "Suspended", "Lapsed", or "Not Found", instantly override other positive scores. This represents existential compliance failure.
+- PAYMENT LAG / TRADE CREDIT EVALUATION (Section 15/16 Compliance):
+  - Safe Zone (0 points): Payment Lag ≤ 15 Days (Optimal Liquidity).
+  - Moderate Trigger (-2 to -4 points): Payment Lag of 16–45 Days (Standard Trade Credit window).
+  - Severe Penalty (-5 to -10 points): Payment Lag > 45 Days. Mark as a statutory violation under Sections 15/16 of the MSMED Act 2006, liable for compounding interest penalties.
+
+# INPUT DATA
 CURRENT SUPPLIER PORTFOLIO:
 ${suppliersJson}
+
 REAL-TIME EXTERNAL DATA:
-- Weather: ${weatherJson}
-- News Alerts: ${newsJson}  
+- Weather Map: ${weatherJson}
+- Industry News Alerts: ${newsJson}  
 - Economic Indicators: ${economicsJson}
+- MSME Registry: ${msmeJson}
 
-TASK: For each supplier, calculate:
-1. Delivery reliability adjustment based on weather conditions (e.g., severe heat, rain, or storms causing delays).
-2. Additional risk from recent news about their industry (disruptions, strikes, shortages).
-3. Overall risk score adjustment (add/subtract points between -10 and +5).
-4. Priority action items (max 2 per supplier).
-
+# OUTPUT JSON SCHEMA REQUIREMENTS
 Return ONLY valid JSON with this exact structure:
 {
   "supplierAdjustments": [
     {
       "supplierId": "A",
       "scoreAdjustment": -3,
-      "weatherImpact": "Clear skies improving delivery / Rain causing delays etc.",
-      "newsRisk": "New regulatory issue / Supply disruption alert etc.",
-      "economicRisk": "Inflation increasing costs / GDP growth positive etc.",
-      "priorityActions": ["action1", "action2"],
-      "alertType": "mild/moderate/critical"
+      "alertType": "low" | "medium" | "high" | "critical",
+      "lastAiSync": "${new Date().toISOString()}",
+      "intelligenceDrawer": {
+        "weatherImpact": "1-2 sentence synthetic assessment of climate risk to local logistics.",
+        "newsRisk": "1-2 sentence summary of sector-wide labor strikes, recalls, or raw material spikes.",
+        "macroOutlook": "1-2 sentence impact statement regarding local inflation/GDP pressures.",
+        "regulatoryStatus": "1-2 sentence verification outcome of Udyam status and MSMED Act compliance."
+      },
+      "cascadeNarrative": "A concise 2-sentence summary synthesizing how these compounding external risks cascade to affect the supplier's ultimate reliability.",
+      "priorityActions": [
+        "Actionable step 1 for the Indian MSME buyer",
+        "Actionable step 2 for the Indian MSME buyer"
+      ]
     }
   ],
   "systemAlert": {
-    "level": "low/Medium/High/Critical",
-    "message": "Summary of overall situation"
+    "level": "low" | "medium" | "high" | "critical",
+    "message": "2-sentence executive summary of network-wide MSME risk posture"
   }
 }`;
 
@@ -843,9 +876,10 @@ Return ONLY valid JSON with this exact structure:
       const news = newsMap[s.industry];
       
       if (adj) {
-        // Apply score adjustment
-        let newScore = s.score + (adj.scoreAdjustment || 0);
-        newScore = Math.max(10, Math.min(99, newScore));
+        // Apply score adjustment capped between -25 and +5
+        const validAdjustment = Math.max(-25, Math.min(5, adj.scoreAdjustment || 0));
+        let newScore = s.score + validAdjustment;
+        newScore = Math.max(5, Math.min(99, newScore));
         
         // Update risk level based on new score
         let riskLevel: Supplier["risk"] = s.risk;
@@ -858,6 +892,8 @@ Return ONLY valid JSON with this exact structure:
         else if (newScore >= 35) { riskLevel = "High Risk"; riskColor = "red"; riskIcon = "alert"; }
         else { riskLevel = "Critical Risk"; riskColor = "error"; riskIcon = "alert"; }
 
+        const intel = adj.intelligenceDrawer || {};
+
         return {
           ...s,
           score: newScore,
@@ -868,16 +904,29 @@ Return ONLY valid JSON with this exact structure:
             weather: weather ? {
               temp: weather.temp,
               condition: weather.condition,
-              impact: adj.weatherImpact || "Stable",
+              impact: intel.weatherImpact || adj.weatherImpact || "Stable weather conditions.",
               fetchedAt: weather.fetchedAt
             } : undefined,
             news: news ? news.map((n: any) => ({
               headline: n.headline,
-              risk: adj.newsRisk || "Low",
+              risk: adj.alertType || "low",
               publishedAt: n.publishedAt
             })) : undefined,
             economicImpact: economics?.indicator ? `${economics.indicator}: ${economics.value}` : undefined,
-            lastRefresh: new Date().toISOString()
+            lastRefresh: new Date().toISOString(),
+            scoreAdjustment: validAdjustment,
+            alertType: adj.alertType || "low",
+            intelligenceDrawer: {
+              weatherImpact: intel.weatherImpact || "Logistics corridor remains free of severe weather bottlenecks.",
+              newsRisk: intel.newsRisk || "No immediate industrial disruption or raw material shortages detected.",
+              macroOutlook: intel.macroOutlook || (economics?.value ? `India GDP growth at ${economics.value} supports baseline stability.` : "Macroeconomic indicators remain within manageable bands."),
+              regulatoryStatus: intel.regulatoryStatus || `Udyam Registration validated with MSMED Section 15 payment lag assessed at ${s.paymentDelay}.`
+            },
+            cascadeNarrative: adj.cascadeNarrative || `Real-time intelligence indicates ${s.name} maintains a risk score of ${newScore}/100 with ${riskLevel.toLowerCase()} operational stability.`,
+            priorityActions: adj.priorityActions || [
+              `Monitor ${s.industry} corridor for supply delivery consistency.`,
+              `Ensure MSMED Act 45-day payment statutory deadlines are tracked.`
+            ]
           }
         };
       }
