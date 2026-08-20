@@ -135,25 +135,25 @@ export const StatsHUD: React.FC<StatsHUDProps> = ({
         </div>
 
         {/* Critical Alert Card */}
-        <div className="p-5 rounded-2xl bg-rose-50/70 dark:bg-gradient-to-br dark:from-[#0E0E12] dark:to-rose-950/20 border border-rose-200 dark:border-rose-500/30 shadow-sm flex flex-col justify-between transition-colors">
+        <div className="p-5 rounded-2xl bg-rose-50/80 dark:bg-[#0f121a] border border-rose-200/80 dark:border-rose-500/30 shadow-sm flex flex-col justify-between transition-colors">
           <div>
             <div className="flex items-center justify-between">
               <span className="font-mono text-[10px] uppercase tracking-wider text-rose-700 dark:text-rose-400 font-bold flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-rose-700 dark:text-rose-400 animate-pulse" />
+                <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 animate-pulse" />
                 Critical Contagion Alert
               </span>
-              <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-700 text-white dark:bg-rose-950/80 dark:border dark:border-rose-500/40 dark:text-rose-300">
+              <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold tracking-wide bg-rose-600 text-white shadow-sm shadow-rose-600/20 dark:bg-rose-500/20 dark:text-rose-300 dark:border dark:border-rose-500/40">
                 HIGH RISK
               </span>
             </div>
-            <div className="mt-3 text-xs sm:text-sm font-semibold text-rose-950 dark:text-[#fb7185] leading-relaxed">
+            <div className="mt-3 text-xs sm:text-sm font-semibold text-rose-950 dark:text-rose-100 leading-relaxed">
               Patel BioSolutions Ltd: Existential default hazard detected. Emergency dual-sourcing advised.
             </div>
           </div>
 
-          <div className="mt-4 pt-3 border-t border-rose-200 dark:border-rose-500/20 flex items-center justify-between text-xs font-mono text-slate-600 dark:text-slate-400">
-            <span>Probability: <strong className="text-rose-700 dark:text-rose-300 font-bold">92%</strong></span>
-            <span>Downstream Exposure: <strong className="text-slate-900 dark:text-white font-bold">₹14.8 Cr</strong></span>
+          <div className="mt-4 pt-3 border-t border-rose-200/80 dark:border-rose-500/20 flex items-center justify-between text-xs font-mono text-slate-600 dark:text-slate-400">
+            <span>Probability: <strong className="text-rose-600 dark:text-rose-400 font-bold">92%</strong></span>
+            <span>Downstream Exposure: <strong className="text-slate-900 dark:text-slate-100 font-bold">₹14.8 Cr</strong></span>
           </div>
         </div>
 

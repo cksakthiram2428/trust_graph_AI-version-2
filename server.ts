@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -187,8 +190,9 @@ async function fetchNews(industry: string) {
 async function fetchEconomics() {
   // World Bank API for India GDP Growth
   try {
-    const url = "https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1";
-    const resp = await axios.get(url);
+    const apiKey = process.env.WORLD_BANK_API_KEY;
+    const url = `https://api.worldbank.org/v2/country/IND/indicator/NY.GDP.MKTP.KD.ZG?format=json&per_page=1${apiKey ? `&api_key=${apiKey}` : ""}`;
+    const resp = await axios.get(url, { timeout: 8000 });
     const data = resp.data[1]?.[0];
     return {
       indicator: "GDP Growth",
@@ -202,12 +206,24 @@ async function fetchEconomics() {
   }
 }
 
+async function fetchRegulatoryCompliance(industry: string) {
+  const apiKey = process.env.OPENFDA_API_KEY;
+  try {
+    const url = `https://api.fda.gov/drug/enforcement.json?search=status:%22Ongoing%22&limit=3${apiKey ? `&api_key=${apiKey}` : ""}`;
+    const resp = await axios.get(url, { timeout: 8000 });
+    return resp.data?.results || [];
+  } catch (err) {
+    // Graceful fallback for non-pharma or network limits
+    return [];
+  }
+}
+
 async function fetchMsmeUpdates() {
   const apiKey = process.env.DATA_GOV_IN_API_KEY;
   if (!apiKey) return null;
   try {
     const url = `https://api.data.gov.in/resource/msme-uddyam-registration?api-key=${apiKey}&format=json&limit=5`;
-    const resp = await axios.get(url);
+    const resp = await axios.get(url, { timeout: 8000 });
     return resp.data;
   } catch (err) {
     console.error("MSME Registry fetch failed:", err);
