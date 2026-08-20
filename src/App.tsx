@@ -25,6 +25,9 @@ import { TermsPageModal } from "./components/TermsPageModal";
 import { ContactModal } from "./components/ContactModal";
 import { ThankYouModal } from "./components/ThankYouModal";
 import { NotFoundPage } from "./components/NotFoundPage";
+import { RiskRemediationModal } from "./components/RiskRemediationModal";
+import { RealTimeOperationsModal } from "./components/RealTimeOperationsModal";
+import { useRealtimeData } from "./hooks/useRealtimeData";
 import { sound } from "./utils/audio";
 import { updatePageSEO } from "./utils/seo";
 import { analytics } from "./utils/analytics";
@@ -123,10 +126,28 @@ export default function App() {
   });
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
+  const [isRealtimeOpsOpen, setIsRealtimeOpsOpen] = useState<boolean>(false);
 
   // Modals and Drawers
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
+
+  // Real-Time Telemetry & Operations Intelligence Hook
+  const {
+    realtimeStatus,
+    aiAnalysis,
+    isAiAnalyzing,
+    activeUsers,
+    adminLogs,
+    refreshStatus,
+    refreshAiAnalysis,
+    logAction
+  } = useRealtimeData({
+    user,
+    currentView: viewMode,
+    supplierFocus: selectedSupplier?.id || null
+  });
+
   const [editingSupplier, setEditingSupplier] = useState<Supplier | null>(null);
   const [isAddEditOpen, setIsAddEditOpen] = useState<boolean>(false);
   const [cascadeTargetSupplier, setCascadeTargetSupplier] = useState<Supplier | null>(null);
@@ -134,6 +155,18 @@ export default function App() {
   const [isCascadeModalOpen, setIsCascadeModalOpen] = useState<boolean>(false);
   const [isCopilotOpen, setIsCopilotOpen] = useState<boolean>(false);
   const [isCsvModalOpen, setIsCsvModalOpen] = useState<boolean>(false);
+  const [isRectifying, setIsRectifying] = useState<boolean>(false);
+  const [isRemediationModalOpen, setIsRemediationModalOpen] = useState<boolean>(false);
+  const [remediationResult, setRemediationResult] = useState<{
+    remediatedVendors: { id: string; name: string; oldScore: number; newScore: number; actions: string[] }[];
+    totalShieldedCapital: string;
+    systemHealth: string;
+    durationMs?: number;
+  }>({
+    remediatedVendors: [],
+    totalShieldedCapital: "₹184.2 Lakhs",
+    systemHealth: "Optimal Network Resilience"
+  });
   const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "error" | "info" } | null>(null);
 
   // Show toast utility
@@ -253,6 +286,7 @@ export default function App() {
         const updated = await res.json();
         setSuppliers(prev => prev.map(s => s.id === updated.id ? updated : s));
         showToast(`MSME "${updated.name}" updated successfully`, "success");
+        logAction("SUPPLIER_UPDATE", "SUPPLIERS", `Updated vendor metrics for ${updated.name}`, { supplierId: updated.id, score: updated.score });
       } else {
         // Create new
         const res = await fetch("/api/suppliers", {
@@ -264,6 +298,7 @@ export default function App() {
         const created = await res.json();
         setSuppliers(prev => [created, ...prev]);
         showToast(`MSME "${created.name}" added to knowledge graph`, "success");
+        logAction("SUPPLIER_CREATE", "SUPPLIERS", `Registered new MSME enterprise ${created.name} in knowledge graph`, { supplierId: created.id });
       }
       setIsAddEditOpen(false);
 
@@ -286,6 +321,7 @@ export default function App() {
       if (!res.ok) throw new Error("Failed to delete");
       setSuppliers(prev => prev.filter(s => s.id !== supplierId));
       showToast("Supplier removed from graph roster", "info");
+      logAction("SUPPLIER_DELETE", "SUPPLIERS", `De-indexed MSME entity ${supplierId} from active graph`, { supplierId });
 
       // Refresh network
       fetch("/api/network")
@@ -336,6 +372,61 @@ export default function App() {
       setRefreshing(false);
     }
   };
+
+  const handleRectifyHighRisks = async () => {
+    setIsRectifying(true);
+    sound.playAISuccess();
+    try {
+      const res = await fetch("/api/admin/rectify-high-risks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      const data = await res.json();
+      if (data.status === "success") {
+        setSuppliers(data.updatedSuppliers);
+        if (data.network) setNetworkData(data.network);
+        setSystemHealth(data.systemHealth || "Optimal Network Resilience - 100% Contagion Vectors Neutralized");
+        
+        setRemediationResult({
+          remediatedVendors: data.remediatedVendors || [],
+          totalShieldedCapital: data.totalShieldedCapitalINR || "₹184.2 Lakhs",
+          systemHealth: data.systemHealth || "Optimal Network Resilience",
+          durationMs: data.durationMs
+        });
+
+        setIsRemediationModalOpen(true);
+        showToast(`⚡ High-Level Rectification Applied: ${data.remediatedCount} high-risk vendors neutralized!`, "success");
+        analytics.track("Risk_Rectified_High_Level", { count: data.remediatedCount });
+        logAction("RISK_RECTIFICATION", "SECURITY", `Executed automated high-level risk rectification across ${data.remediatedCount} critical vendors`, { count: data.remediatedCount, shielded: data.totalShieldedCapitalINR });
+      } else {
+        throw new Error(data.error || "Rectification failed");
+      }
+    } catch (err: any) {
+      console.error(err);
+      showToast(err.message || "Failed to execute risk rectification", "error");
+    } finally {
+      setIsRectifying(false);
+    }
+  };
+
+  const handleResetRisks = async () => {
+    try {
+      const res = await fetch("/api/admin/reset-risks", { method: "POST" });
+      const data = await res.json();
+      setSuppliers(data.suppliers);
+      if (data.network) setNetworkData(data.network);
+      setSystemHealth("Active Neural Monitoring");
+      setIsRemediationModalOpen(false);
+      showToast("Restored initial stress-test baseline portfolio", "info");
+      logAction("RESET_RISKS", "SECURITY", "Restored initial stress-test baseline portfolio", {});
+    } catch (err: any) {
+      showToast("Failed to reset baseline", "error");
+    }
+  };
+
+  const hasHighRisks = suppliers.some(
+    s => s.score < 80 || s.risk === "Critical Risk" || s.risk === "High Risk" || s.risk === "Medium Risk"
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-300 selection:bg-cyan-500/30 selection:text-cyan-600 dark:selection:text-cyan-200 relative">
@@ -401,6 +492,8 @@ export default function App() {
             }}
             user={user}
             onOpenProfile={() => setIsProfileOpen(true)}
+            onOpenRealtimeOps={() => setIsRealtimeOpsOpen(true)}
+            onlineUsersCount={activeUsers.length || 3}
             onLoginClick={() => setPageMode("LOGIN")}
             onLogout={handleLogout}
             theme={theme}
@@ -423,6 +516,10 @@ export default function App() {
               lastRealtimeRefresh={lastRealtimeRefresh}
               onRefreshRealtime={handleRefreshRealtime}
               isRefreshing={refreshing}
+              onRectifyHighRisks={handleRectifyHighRisks}
+              isRectifying={isRectifying}
+              hasHighRisks={hasHighRisks}
+              onOpenRemediationReport={() => setIsRemediationModalOpen(true)}
             />
 
             {/* Knowledge Graph View Switcher Container */}
@@ -456,6 +553,8 @@ export default function App() {
                   suppliers={suppliers}
                   onSelectSupplier={(s) => setSelectedSupplier(s)}
                   onSimulateCascade={(s) => handleOpenCascadeModal(s)}
+                  onRectifyHighRisks={handleRectifyHighRisks}
+                  isRectifying={isRectifying}
                 />
               )}
             </div>
@@ -611,6 +710,7 @@ export default function App() {
         onImportSuccess={(count) => {
           fetchInitialData();
           setIsCsvModalOpen(false);
+          logAction("CSV_IMPORT", "INGESTION", `Imported batch of ${count} MSME records from public registries`, { count });
           setThankYouInfo({
             title: "Dataset Ingestion Complete",
             message: `Successfully validated and integrated ${count} MSME records from public registries into the active 3D knowledge graph with statutory GSTIN tags.`,
@@ -659,6 +759,30 @@ export default function App() {
           setUser(loggedUser);
           showToast(`Welcome back, ${loggedUser.name}`, "success");
         }}
+      />
+
+      {/* High-Level Risk Remediation Report Modal */}
+      <RiskRemediationModal
+        isOpen={isRemediationModalOpen}
+        onClose={() => setIsRemediationModalOpen(false)}
+        remediatedVendors={remediationResult.remediatedVendors}
+        totalShieldedCapital={remediationResult.totalShieldedCapital}
+        systemHealth={remediationResult.systemHealth}
+        durationMs={remediationResult.durationMs}
+        onResetRisks={handleResetRisks}
+      />
+
+      {/* Real-Time Operations Intelligence & Live Presence Matrix Modal */}
+      <RealTimeOperationsModal
+        isOpen={isRealtimeOpsOpen}
+        onClose={() => setIsRealtimeOpsOpen(false)}
+        statusPayload={realtimeStatus}
+        aiAnalysis={aiAnalysis}
+        isAiAnalyzing={isAiAnalyzing}
+        onRefreshStatus={refreshStatus}
+        onRefreshAiAnalysis={refreshAiAnalysis}
+        activeUsers={activeUsers}
+        adminLogs={adminLogs}
       />
     </div>
   );

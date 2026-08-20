@@ -15,6 +15,10 @@ interface StatsHUDProps {
   lastRealtimeRefresh?: string;
   onRefreshRealtime?: () => void;
   isRefreshing?: boolean;
+  onRectifyHighRisks?: () => void;
+  isRectifying?: boolean;
+  hasHighRisks?: boolean;
+  onOpenRemediationReport?: () => void;
 }
 
 export const StatsHUD: React.FC<StatsHUDProps> = ({ 
@@ -26,7 +30,11 @@ export const StatsHUD: React.FC<StatsHUDProps> = ({
   isLoading = false,
   lastRealtimeRefresh,
   onRefreshRealtime,
-  isRefreshing = false
+  isRefreshing = false,
+  onRectifyHighRisks,
+  isRectifying = false,
+  hasHighRisks = true,
+  onOpenRemediationReport
 }) => {
   const [selectedTag, setSelectedTag] = useState<string>("All");
 
@@ -134,28 +142,88 @@ export const StatsHUD: React.FC<StatsHUDProps> = ({
           </div>
         </div>
 
-        {/* Critical Alert Card */}
-        <div className="p-5 rounded-2xl bg-rose-50/80 dark:bg-[#0f121a] border border-rose-200/80 dark:border-rose-500/30 shadow-sm flex flex-col justify-between transition-colors">
-          <div>
-            <div className="flex items-center justify-between">
-              <span className="font-mono text-[10px] uppercase tracking-wider text-rose-700 dark:text-rose-400 font-bold flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 animate-pulse" />
-                Critical Contagion Alert
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold tracking-wide bg-rose-600 text-white shadow-sm shadow-rose-600/20 dark:bg-rose-500/20 dark:text-rose-300 dark:border dark:border-rose-500/40">
-                HIGH RISK
-              </span>
+        {/* Critical Alert / Resilient Status Card */}
+        {hasHighRisks ? (
+          <div className="p-5 rounded-2xl bg-rose-50/90 dark:bg-[#0f121a] border border-rose-200/90 dark:border-rose-500/30 shadow-sm flex flex-col justify-between transition-all">
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-rose-700 dark:text-rose-400 font-bold flex items-center gap-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400 animate-pulse" />
+                  Critical Contagion Alert
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold tracking-wide bg-rose-600 text-white shadow-sm shadow-rose-600/20 dark:bg-rose-500/20 dark:text-rose-300 dark:border dark:border-rose-500/40">
+                  HIGH RISK
+                </span>
+              </div>
+              <div className="mt-3 text-xs sm:text-sm font-semibold text-rose-950 dark:text-rose-100 leading-relaxed">
+                Aarti Drugs Ltd & Lupin Laboratories: Elevated default hazard detected. Emergency dual-sourcing & liquidity intervention required.
+              </div>
             </div>
-            <div className="mt-3 text-xs sm:text-sm font-semibold text-rose-950 dark:text-rose-100 leading-relaxed">
-              Patel BioSolutions Ltd: Existential default hazard detected. Emergency dual-sourcing advised.
-            </div>
-          </div>
 
-          <div className="mt-4 pt-3 border-t border-rose-200/80 dark:border-rose-500/20 flex items-center justify-between text-xs font-mono text-slate-600 dark:text-slate-400">
-            <span>Probability: <strong className="text-rose-600 dark:text-rose-400 font-bold">92%</strong></span>
-            <span>Downstream Exposure: <strong className="text-slate-900 dark:text-slate-100 font-bold">₹14.8 Cr</strong></span>
+            <div className="mt-4 pt-3 border-t border-rose-200/80 dark:border-rose-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs font-mono">
+              <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
+                <span>Probability: <strong className="text-rose-600 dark:text-rose-400 font-bold">92%</strong></span>
+                <span>Exposure: <strong className="text-slate-900 dark:text-slate-100 font-bold">₹184.2 L</strong></span>
+              </div>
+
+              {onRectifyHighRisks && (
+                <button
+                  id="rectify-all-high-risks-btn"
+                  onClick={() => {
+                    sound.playClick();
+                    onRectifyHighRisks();
+                  }}
+                  disabled={isRectifying}
+                  className={`w-full sm:w-auto px-3 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-md ${
+                    isRectifying 
+                      ? "bg-slate-300 text-slate-600 dark:bg-white/10 dark:text-slate-400 cursor-not-allowed" 
+                      : "bg-emerald-600 hover:bg-emerald-500 text-white shadow-emerald-600/20 hover:scale-105 active:scale-95"
+                  }`}
+                >
+                  <ShieldCheck className={`w-3.5 h-3.5 ${isRectifying ? "animate-spin" : "animate-bounce"}`} />
+                  {isRectifying ? "Rectifying Risks..." : "⚡ Rectify All High Risks"}
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div className="p-5 rounded-2xl bg-emerald-50/90 dark:bg-emerald-950/20 border border-emerald-300/80 dark:border-emerald-500/30 shadow-sm flex flex-col justify-between transition-all">
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase tracking-wider text-emerald-700 dark:text-emerald-400 font-bold flex items-center gap-1.5">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  All High Risks Rectified
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold tracking-wide bg-emerald-600 text-white shadow-sm shadow-emerald-600/20 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border dark:border-emerald-500/40">
+                  OPTIMAL RESILIENCE
+                </span>
+              </div>
+              <div className="mt-3 text-xs sm:text-sm font-semibold text-emerald-950 dark:text-emerald-100 leading-relaxed">
+                Network fully insulated: 100% of critical supply chain vulnerabilities neutralized via dual-sourcing & MSMED TReDS factoring.
+              </div>
+            </div>
+
+            <div className="mt-4 pt-3 border-t border-emerald-200/80 dark:border-emerald-500/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs font-mono">
+              <span className="text-emerald-700 dark:text-emerald-400 font-bold">
+                Capital Shielded: ₹184.2 Lakhs
+              </span>
+
+              {onOpenRemediationReport && (
+                <button
+                  id="view-remediation-report-btn"
+                  onClick={() => {
+                    sound.playClick();
+                    onOpenRemediationReport();
+                  }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold tracking-wider uppercase bg-emerald-700 hover:bg-emerald-600 text-white flex items-center gap-1.5 cursor-pointer transition-all shadow-sm"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  View Remediation Report
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* System Status / Explainable Trust Index Card */}
         <div className="p-5 rounded-2xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-white/10 shadow-sm flex flex-col justify-between transition-colors">
