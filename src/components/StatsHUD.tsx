@@ -119,24 +119,24 @@ export const StatsHUD: React.FC<StatsHUDProps> = ({
             </div>
           </div>
 
-          {/* Neural Filter Tags with Scale Up & Loading Animation */}
-          <div className="mt-4 flex flex-wrap gap-1.5">
+          {/* Neural Filter Tags with Scrollable Animations & Scale Up */}
+          <div className="mt-4 flex items-center gap-2 overflow-x-auto whitespace-nowrap scrollbar-none pb-1 relative">
             {tags.map((tag, i) => (
               <motion.button
                 key={tag}
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
+                initial={{ scale: 0.9, opacity: 0, x: -10 }}
+                animate={{ scale: 1, opacity: 1, x: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleTagClick(tag)}
-                className={`px-3 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-mono transition-all cursor-pointer inline-flex items-center gap-1 shrink-0 ${
                   selectedTag === tag
                     ? "bg-sky-500 text-white font-bold shadow-md shadow-sky-500/20"
                     : "bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10"
                 }`}
               >
-                {tag}
+                <span>{tag}</span>
               </motion.button>
             ))}
           </div>
