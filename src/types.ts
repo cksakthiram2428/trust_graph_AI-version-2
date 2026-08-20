@@ -151,7 +151,149 @@ export interface RealtimeUser {
   provider: "google" | "github" | "microsoft" | "password";
   role: string;
   lastLoginAt: string;
-  status: "online" | "active" | "offline";
+  status: "online" | "active" | "offline" | "away";
+  currentView?: "3D_SPACE" | "2D_TOPOLOGY" | "RISK_MATRIX";
+  supplierFocus?: string | null;
+  lastActivity?: string;
+  sessionDuration?: number;
+  mouseActivity?: boolean;
+  cursorPosition?: { x: number; y: number };
 }
 
 export type ViewMode = "3D_SPACE" | "2D_TOPOLOGY" | "RISK_MATRIX";
+
+export interface UserPresenceData {
+  userId: string;
+  email: string;
+  displayName: string;
+  status: "online" | "offline" | "away";
+  currentView: ViewMode;
+  supplierFocus: string | null;
+  lastActivity: string;
+  sessionDuration: number;
+  mouseActivity: boolean;
+  cursorPosition: { x: number; y: number };
+}
+
+export interface AdminMetricsData {
+  totalUsers: number | string;
+  activeSessions: number | string;
+  suppliersToday: number | string;
+  importsToday: number | string;
+  aiRequestsToday: number | string;
+  systemHealth: "Stable" | "Elevated" | "Critical" | string;
+  avgResponseTime: number | string;
+  errorRate: string;
+  lastDataSync: string;
+}
+
+export interface CollaborationData {
+  activeChats: number | string;
+  sharedAnnotations: number | string;
+  realTimeEdits: number | string;
+  presenceMap: Record<string, {
+    name: string;
+    view: string;
+    since: string;
+    email?: string;
+    focus?: string | null;
+  }>;
+}
+
+export interface SystemPerformanceData {
+  apiLatency: {
+    suppliersEndpoint: number | string;
+    aiAnalyzeEndpoint: number | string;
+    cascadeSimulation: number | string;
+    networkGraph: number | string;
+  };
+  firebaseStatus: "connected" | "disconnected";
+  geminiRateLimit: string;
+  dataFreshness: number | string;
+  cacheHitRate: string;
+}
+
+export interface ActivityInsightsData {
+  mostActiveSuppliers: string[];
+  popularIndustries: string[];
+  peakActivityHours: string;
+  commonViewTransitions: string[];
+  userRetention: string;
+}
+
+export interface AlertsData {
+  activeAlerts: number;
+  criticalIssues: string[];
+  systemNotifications: string;
+  maintenanceRequired: boolean;
+}
+
+export interface RealTimeStatusPayload {
+  userPresence: UserPresenceData;
+  activeUsersList?: UserPresenceData[];
+  adminMetrics: AdminMetricsData;
+  collaborationData: CollaborationData;
+  systemPerformance: SystemPerformanceData;
+  activityInsights: ActivityInsightsData;
+  alerts: AlertsData;
+  metadata: {
+    fetchStatus: "success" | "partial" | "failed";
+    executionTime: number | string;
+    nextSync: string;
+    dataQuality: "high" | "medium" | "low";
+    errorDetails?: string;
+  };
+}
+
+export interface AIRealTimeAnalysis {
+  userPatterns: {
+    mostPopularView: string;
+    avgSessionDuration: string;
+    topMonitoredSuppliers: string[];
+    peakActivityHour: string | number;
+    userRetentionScore: string | number;
+    viewTransitionPatterns: string[];
+  };
+  systemAssessment: {
+    overallHealth: "Stable" | "Elevated" | "Critical";
+    performanceBottleneck: string | null;
+    firebaseStatus: string;
+    apiCostEfficiency: "high" | "medium" | "low";
+    dataFreshnessScore: number;
+    recommendedActions: string[];
+  };
+  adminInsights: {
+    priorityAlerts: {
+      type: string;
+      severity: "low" | "Medium" | "Critical";
+      message: string;
+      actionRequired: string;
+      timestamp: string;
+    }[];
+    resourceRecommendations: {
+      serverCapacity: string;
+      apiCreditAllocation: string;
+      featurePriority: string[];
+    };
+    userExperienceScore: string;
+  };
+  predictiveMetrics: {
+    expectedUserGrowth: string;
+    peakLoadForecast: string;
+    capacityWarnings: string[];
+    recommendedScaling: string;
+    marketingOpportunities: string[];
+  };
+  realTimeAlerts: {
+    activeAlerts: number;
+    criticalIssues: string[];
+    notifications: string;
+    maintenanceWindow?: string;
+  };
+  metadata: {
+    analysisConfidence: "high" | "medium" | "low";
+    dataPointsAnalyzed: number;
+    lastDataUpdate: string;
+    recommendedNextAnalysis: string;
+  };
+}

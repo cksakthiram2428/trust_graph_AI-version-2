@@ -38,6 +38,8 @@ interface NavbarProps {
   onLoginClick: () => void;
   onLogout: () => void;
   onOpenProfile?: () => void;
+  onOpenRealtimeOps?: () => void;
+  onlineUsersCount?: number;
   theme: "dark" | "light";
   onToggleTheme: () => void;
   onShowLanding?: () => void;
@@ -56,6 +58,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onLoginClick,
   onLogout,
   onOpenProfile,
+  onOpenRealtimeOps,
+  onlineUsersCount = 3,
   theme,
   onToggleTheme,
   onShowLanding,
@@ -115,13 +119,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* Fixed Telemetry Status Chip */}
-          <div className="hidden md:flex items-center gap-2 px-2 py-1 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] text-[10px] text-slate-700 dark:text-slate-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
-            <span>SYS: ONLINE</span>
+          {/* Fixed Telemetry Status Chip & Real-Time Ops Trigger */}
+          <button
+            onClick={() => {
+              sound.playClick();
+              if (onOpenRealtimeOps) onOpenRealtimeOps();
+            }}
+            className="hidden md:flex items-center gap-2 px-2.5 py-1 rounded border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-[10px] text-slate-700 dark:text-slate-300 transition-colors cursor-pointer"
+            title="View Real-Time Operations Intelligence & Multi-User Presence Matrix"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-cyan-600 dark:text-cyan-400 font-bold">{onlineUsersCount} LIVE ADM</span>
             <span className="text-slate-300 dark:text-slate-700">|</span>
-            <span className="text-amber-700 dark:text-amber-400 font-semibold">MSMED: SEC 15/16</span>
-          </div>
+            <span className="text-emerald-600 dark:text-emerald-400 font-semibold">STABLE</span>
+            <span className="text-slate-300 dark:text-slate-700">|</span>
+            <Radio className="w-3 h-3 text-cyan-500" />
+          </button>
         </div>
 
         {/* Center: Command Mode Selector (Desktop) */}
@@ -184,6 +197,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right: Edge Command Actions */}
         <div className="flex items-center gap-2">
+          {/* Real-Time Ops Intelligence Trigger */}
+          <button
+            onClick={() => {
+              sound.playClick();
+              if (onOpenRealtimeOps) onOpenRealtimeOps();
+            }}
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-500/20 text-xs font-bold transition-all cursor-pointer"
+            title="Real-Time Operations & Admin Intelligence (Gemini AI + Live Multi-User)"
+          >
+            <Radio className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+            <span>OPS [{onlineUsersCount}]</span>
+          </button>
+
           {/* AI Copilot Trigger */}
           <button
             onClick={() => {
@@ -262,6 +288,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
 
                     <div className="mt-1 space-y-0.5">
+                      <button
+                        onClick={() => {
+                          sound.playClick();
+                          setIsUserMenuOpen(false);
+                          onOpenRealtimeOps?.();
+                        }}
+                        className="w-full px-2.5 py-2 rounded text-left bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 flex items-center gap-2 border border-emerald-500/20 font-bold"
+                      >
+                        <Radio className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+                        <span>Real-Time Operations Deck</span>
+                      </button>
+
                       <button
                         onClick={() => {
                           sound.playClick();

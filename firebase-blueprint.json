@@ -30,8 +30,8 @@
       "required": ["name", "score", "risk"]
     },
     "users": {
-      "title": "Platform Users",
-      "description": "Authenticated procurement directors, risk auditors, and enterprise admins",
+      "title": "Platform Users & Real-Time Presence",
+      "description": "Authenticated procurement directors, risk auditors, and enterprise admins with live presence",
       "type": "object",
       "properties": {
         "uid": { "type": "string" },
@@ -41,10 +41,66 @@
         "provider": { "type": "string", "enum": ["google", "microsoft", "github", "password"] },
         "role": { "type": "string" },
         "lastLoginAt": { "type": "string" },
+        "lastActivity": { "type": "string" },
         "createdAt": { "type": "string" },
-        "status": { "type": "string", "enum": ["online", "active", "offline"] }
+        "status": { "type": "string", "enum": ["online", "active", "away", "offline"] },
+        "currentView": { "type": "string", "enum": ["3D_SPACE", "2D_TOPOLOGY", "RISK_MATRIX"] },
+        "supplierFocus": { "type": "string" },
+        "sessionDuration": { "type": "number" },
+        "mouseActivity": { "type": "boolean" },
+        "cursorPosition": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          }
+        }
       },
       "required": ["uid", "email"]
+    },
+    "admin_logs": {
+      "title": "Admin Operation Logs",
+      "description": "Real-time audit log of MSME CSV ingestions, supplier modifications, risk rectifications, and administrative actions",
+      "type": "object",
+      "properties": {
+        "action": { "type": "string" },
+        "category": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "details": { "type": "string" },
+        "metadata": { "type": "object" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["action", "timestamp"]
+    },
+    "system_metrics": {
+      "title": "System Performance Metrics",
+      "description": "Automated performance tracking snapshots with API latencies, error counts, and AI metrics",
+      "type": "object",
+      "properties": {
+        "timestamp": { "type": "string" },
+        "apiLatencies": { "type": "object" },
+        "errorCounts": { "type": "number" },
+        "status": { "type": "string" },
+        "firebaseStatus": { "type": "string" },
+        "geminiCallsCount": { "type": "number" }
+      },
+      "required": ["timestamp", "status"]
+    },
+    "active_sessions": {
+      "title": "Active User Sessions",
+      "description": "Multi-user live sessions for collaboration and view synchronizations",
+      "type": "object",
+      "properties": {
+        "sessionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "displayName": { "type": "string" },
+        "loginTime": { "type": "string" },
+        "lastSeen": { "type": "string" },
+        "currentView": { "type": "string" }
+      },
+      "required": ["sessionId", "userId", "loginTime"]
     },
     "chat_messages": {
       "title": "Chat Messages",
@@ -76,5 +132,36 @@
       },
       "required": ["supplierName", "shockType", "createdAt"]
     }
+  },
+  "firestore": {
+    "/suppliers/{supplierId}": {
+      "schema": "suppliers",
+      "description": "Primary repository of supply chain suppliers"
+    },
+    "/users/{userId}": {
+      "schema": "users",
+      "description": "User profiles and real-time presence indicators"
+    },
+    "/admin-logs/{logId}": {
+      "schema": "admin_logs",
+      "description": "Administrative action logs and audit trail"
+    },
+    "/system-metrics/{metricId}": {
+      "schema": "system_metrics",
+      "description": "Periodic system health and latency benchmarks"
+    },
+    "/active-sessions/{sessionId}": {
+      "schema": "active_sessions",
+      "description": "Live active user session tracking"
+    },
+    "/chat_messages/{messageId}": {
+      "schema": "chat_messages",
+      "description": "Gemini AI Copilot chat history"
+    },
+    "/simulation_logs/{logId}": {
+      "schema": "simulation_logs",
+      "description": "Contagion simulation cascade histories"
+    }
   }
 }
+

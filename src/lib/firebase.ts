@@ -115,6 +115,52 @@ export async function updateUserProfileInFirestore(uid: string, updates: Record<
   }
 }
 
+export async function updateUserPresence(uid: string, presenceData: {
+  status?: "online" | "active" | "away" | "offline";
+  currentView?: "3D_SPACE" | "2D_TOPOLOGY" | "RISK_MATRIX";
+  supplierFocus?: string | null;
+  cursorPosition?: { x: number; y: number };
+  mouseActivity?: boolean;
+  sessionDuration?: number;
+}) {
+  try {
+    if (!uid) return;
+    const userRef = doc(db, "users", uid);
+    await setDoc(userRef, {
+      ...presenceData,
+      lastActivity: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    return true;
+  } catch (e) {
+    console.warn("Could not update user presence in Firestore:", e);
+    return false;
+  }
+}
+
+export async function logAdminOperation(
+  action: string,
+  category: "MSME_INGESTION" | "SUPPLIER_EDIT" | "RISK_RECTIFICATION" | "AI_FORENSICS" | "USER_AUTH" | "SYSTEM_AUDIT",
+  details: string,
+  user?: { uid?: string; email?: string } | null,
+  metadata?: Record<string, any>
+) {
+  try {
+    const logsCol = collection(db, "admin-logs");
+    await addDoc(logsCol, {
+      action,
+      category,
+      details,
+      userId: user?.uid || "system-auto",
+      userEmail: user?.email || "cpo@msme-trustgraph.com",
+      metadata: metadata || {},
+      timestamp: new Date().toISOString()
+    });
+  } catch (e) {
+    console.warn("Could not write admin log to Firestore:", e);
+  }
+}
+
 export function subscribeToRealtimeUsers(callback: (users: any[]) => void) {
   try {
     const usersCol = collection(db, "users");
@@ -131,6 +177,34 @@ export function subscribeToRealtimeUsers(callback: (users: any[]) => void) {
     return () => {};
   }
 }
+
+export function subscribeToAdminLogs(callback: (logs: any[]) => void, maxItems: number = 20) {
+  try {
+    const logsCol = collection(db, "admin-logs");
+    const q = query(logsCol, orderBy("timestamp", "desc"), limit(maxItems));
+    return onSnapshot(q, (snapshot) => {
+      const logsList = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      callback(logsList);
+    }, (err) => {
+      console.warn("Real-time admin-logs snapshot error:", err);
+      callback([]);
+    });
+  } catch (e) {
+    console.warn("Failed to subscribe to admin-logs:", e);
+    return () => {};
+  }
+}
+
+export async function checkFirebaseConnectivity(): Promise<boolean> {
+  try {
+    const testDoc = doc(db, "users", "__health_probe__");
+    await getDoc(testDoc);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 
 export async function logOut() {
   try {

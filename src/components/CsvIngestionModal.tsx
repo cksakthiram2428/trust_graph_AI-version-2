@@ -33,10 +33,10 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
   if (!isOpen) return null;
 
   const sampleCsvTemplate = `enterprise_name,udyam_registration_number,enterprise_type,major_activity,nic_5_digit_code,district,state,gstin,cin
-"Apex Micro-Motors India Pvt Ltd","UDYAM-KR-03-0019284","Small","Precision Micro Motors & Actuators","27104 - Electric motors and generators","Bengaluru Urban","Karnataka","29AAACA1111A1Z1","U31100KA2018PTC112345"
-"Gujarat Electro-Polymers Corp","UDYAM-GJ-01-0048192","Medium","Specialty Polymer Insulation & Resins","20131 - Polymers and resins","Vadodara","Gujarat","24AABCG2222B1Z8","U24100GJ2015PLC089123"
-"TamilNadu Fasteners & Forgings","UDYAM-TN-02-0081734","Micro","High-Tensile Industrial Fasteners","25991 - Fasteners, rivets, screws","Coimbatore","Tamil Nadu","33AAACT3333C1Z5",""
-"Hyderabad Bio-Reagents Works","UDYAM-TS-09-0034182","Small","API Chemical Reagents","21002 - Medicaments and chemicals","Medchal-Malkajgiri","Telangana","36AABCH4444D1Z2",""`;
+"Centum Electronics Ltd","UDYAM-KR-03-0009182","Medium","Defense & Aerospace Microelectronics","26101 - Electronic components","Bengaluru Urban","Karnataka","29AAACC7541M1Z1","L85110KA1993PLC013869"
+"Deepak Nitrite Ltd","UDYAM-GJ-24-0005432","Medium","Basic Chemicals & Industrial Intermediates","20119 - Basic organic chemicals","Vadodara","Gujarat","24AAACD1177D1ZD","L24110GJ1970PLC001735"
+"Bharat Forge Ltd","UDYAM-MH-26-0003184","Medium","Precision Forgings & Powertrain Components","25910 - Forging, pressing, stamping of metal","Pune","Maharashtra","27AAACB0562G1ZT","L25209PN1961PLC012046"
+"Sona BLW Precision Forgings Ltd","UDYAM-HR-05-0004912","Medium","EV Driveline Systems & Precision Gears","29301 - Parts and accessories for motor vehicles","Gurugram","Haryana","06AAACS5643B1ZB","L27223HR1995PLC038899"`;
 
   const handleLoadSample = () => {
     sound.playClick();
