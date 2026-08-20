@@ -142,9 +142,36 @@ export const SupplierGrid: React.FC<SupplierGridProps> = ({
         </div>
       </div>
 
-      {/* Supplier 3D Cards Grid with Scale Up Animations */}
+      {/* Supplier 3D Cards Grid with Scale Up Animations & Skeletal Shimmer Loaders */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredSuppliers.map((supplier, idx) => {
+        {suppliers.length === 0 &&
+          Array.from({ length: 6 }).map((_, i) => (
+            <motion.div
+              key={`skeleton-${i}`}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: i * 0.05 }}
+              className="p-6 rounded-2xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-white/10 shadow-sm animate-pulse h-56 flex flex-col justify-between"
+            >
+              <div className="space-y-3">
+                <div className="w-24 h-5 bg-slate-200 dark:bg-slate-800 rounded-md" />
+                <div className="w-3/4 h-6 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+                <div className="w-1/2 h-4 bg-slate-200 dark:bg-slate-800 rounded-md" />
+              </div>
+              <div className="flex justify-between items-center pt-4 border-t border-slate-100 dark:border-white/5">
+                <div className="w-16 h-8 bg-slate-200 dark:bg-slate-800 rounded-lg" />
+                <div className="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-800" />
+              </div>
+            </motion.div>
+          ))}
+
+        {suppliers.length > 0 && filteredSuppliers.length === 0 && (
+          <div className="col-span-full py-16 text-center text-slate-400 font-mono text-sm">
+            No supplier nodes match your active query filters.
+          </div>
+        )}
+
+        {suppliers.length > 0 && filteredSuppliers.map((supplier, idx) => {
           const color = getScoreColor(supplier.score);
           const circumference = 2 * Math.PI * 26;
           const strokeDashoffset = circumference - (supplier.score / 100) * circumference;

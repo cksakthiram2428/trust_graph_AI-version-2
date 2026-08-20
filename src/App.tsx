@@ -118,11 +118,15 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
-  // User Auth State with Firebase integration
-  const [user, setUser] = useState<User | null>({
-    email: "admin@trustgraph.com",
-    name: "MSME Operations HQ",
-    role: "Chief Procurement Officer"
+  // User Auth State with Firebase integration & persistent session storage
+  const [user, setUser] = useState<User | null>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("trustgraph_user");
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return null; // Fresh open starts logged out
   });
   const [isLoginOpen, setIsLoginOpen] = useState<boolean>(false);
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
@@ -179,7 +183,7 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        setUser({
+        saveUserSession({
           uid: firebaseUser.uid,
           email: firebaseUser.email || "user@trustgraph.com",
           name: firebaseUser.displayName || "Procurement Officer",
@@ -333,12 +337,22 @@ export default function App() {
     }
   };
 
+  const saveUserSession = (u: User) => {
+    setUser(u);
+    try {
+      localStorage.setItem("trustgraph_user", JSON.stringify(u));
+    } catch (e) {}
+  };
+
   const handleLogout = async () => {
     sound.playClick();
     try {
       await logOut();
     } catch (e) {}
     setUser(null);
+    try {
+      localStorage.removeItem("trustgraph_user");
+    } catch (e) {}
     setPageMode("LANDING");
     showToast("Signed out. Returned to Landing page.", "info");
     analytics.track("User_Logout");
@@ -467,7 +481,7 @@ export default function App() {
       ) : pageMode === "LOGIN" ? (
         <LoginPage
           onLoginSuccess={(loggedUser) => {
-            setUser(loggedUser);
+            saveUserSession(loggedUser);
             setPageMode("WORKSPACE");
             showToast(`Welcome back, ${loggedUser.name}`, "success");
           }}
@@ -756,7 +770,7 @@ export default function App() {
         isOpen={isLoginOpen}
         onClose={() => setIsLoginOpen(false)}
         onLoginSuccess={(loggedUser) => {
-          setUser(loggedUser);
+          saveUserSession(loggedUser);
           showToast(`Welcome back, ${loggedUser.name}`, "success");
         }}
       />
