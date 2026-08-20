@@ -2,274 +2,195 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  --animate-aurora: aurora 60s linear infinite;
-  @keyframes aurora {
-    from {
-      background-position: 50% 50%, 50% 50%;
-    }
-    to {
-      background-position: 350% 50%, 350% 50%;
-    }
-  }
-}
-
-@keyframes aurora {
-  from {
-    background-position: 50% 50%, 50% 50%;
-  }
-  to {
-    background-position: 350% 50%, 350% 50%;
-  }
-}
-
-.animate-aurora {
-  animation: aurora 60s linear infinite;
-}
-
 @layer base {
   :root {
-    --bg: #F8FAFC;
+    --bg: #F8F9FA;
+    --surface: #FFFFFF;
+    --surface-secondary: #F1F4F8;
+    --border-subtle: #E2E8F0;
     --ink: #0F172A;
-    --accent: #0284C7;
-    --surface: rgba(0, 0, 0, 0.03);
-    --border-subtle: rgba(0, 0, 0, 0.08);
+    --ink-muted: #64748B;
+    
+    /* Single Anchor Hue: Electric Cyan */
+    --accent: #0891B2;
+    --accent-light: #E0F2FE;
+    --accent-focus: #06B6D4;
+    
+    /* Single Accent: Signal Amber */
+    --signal: #D97706;
+    --signal-light: #FEF3C7;
   }
 
   .dark {
-    --bg: #0A0A0C;
+    --bg: #090A0F;
+    --surface: #0F121A;
+    --surface-secondary: #161B26;
+    --border-subtle: #1F2737;
     --ink: #E2E8F0;
-    --accent: #38BDF8;
-    --surface: rgba(255, 255, 255, 0.03);
-    --border-subtle: rgba(255, 255, 255, 0.1);
+    --ink-muted: #8492A6;
+    
+    /* Single Anchor Hue: Electric Cyan */
+    --accent: #06B6D4;
+    --accent-light: rgba(6, 182, 212, 0.12);
+    --accent-focus: #22D3EE;
+    
+    /* Single Accent: Signal Amber */
+    --signal: #F59E0B;
+    --signal-light: rgba(245, 158, 11, 0.15);
   }
 
   body {
     background-color: var(--bg);
     color: var(--ink);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Plus Jakarta Sans', sans-serif;
     overflow-x: hidden;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 }
 
+/* Mobile Sticky CTA Accessibility */
+.sticky-mobile-cta {
+  padding: 12px !important;
+}
+
+.sticky-mobile-cta a,
+.sticky-mobile-cta button {
+  min-height: 44px !important;
+  min-width: 44px !important;
+}
+
+/* Typography Hierarchy */
+.font-display {
+  font-family: 'Syne', sans-serif;
+  letter-spacing: -0.03em;
+}
+
+.font-body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
 
 .font-mono {
   font-family: 'JetBrains Mono', monospace;
 }
 
-.font-display {
-  font-family: 'Space Grotesk', sans-serif;
+/* Tactical Terminal Command Theme Components */
+.terminal-bar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-.hero-title {
-  font-size: clamp(1.75rem, 4vw, 3.2rem);
-  font-weight: 700;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+.terminal-panel {
+  background: var(--surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
 }
 
-.design-label {
+.terminal-pill {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  opacity: 0.6;
+  padding: 0.25rem 0.625rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-secondary);
+  color: var(--ink);
 }
 
-.btn-cyber {
-  padding: 0.6rem 1.25rem;
+.terminal-pill-active {
+  border-color: var(--accent);
+  background: var(--accent-light);
+  color: var(--accent-focus);
+  font-weight: 700;
+}
+
+/* Tactical Engineering Grid Lines */
+.tactical-grid {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(6, 182, 212, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(6, 182, 212, 0.04) 1px, transparent 1px);
+}
+
+.dark .tactical-grid {
+  background-image: 
+    linear-gradient(to right, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+}
+
+/* Precision Action Button */
+.btn-command {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
   border: 1px solid var(--accent);
-  color: var(--accent);
-  background: transparent;
+  background: var(--accent);
+  color: #090A0F;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-command:hover {
+  background: var(--accent-focus);
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.3);
+}
+
+.btn-command-secondary {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
   text-transform: uppercase;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-}
-
-.btn-cyber:hover {
-  background: var(--accent);
-  color: var(--bg);
-  box-shadow: 0 0 20px rgba(56, 189, 248, 0.35);
-}
-
-.graph-viewport-box {
-  background: radial-gradient(circle at center, #1e293b 0%, #0a0a0c 70%);
-  border-radius: 1.5rem;
-  position: relative;
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  overflow: hidden;
-}
-
-/* 3D Perspective & Preserved Depth */
-.perspective-1000 {
-  perspective: 1000px;
-}
-
-.perspective-1600 {
-  perspective: 1600px;
-}
-
-.preserve-3d {
-  transform-style: preserve-3d;
-}
-
-.backface-hidden {
-  backface-visibility: hidden;
-}
-
-/* Design Variation Card System */
-.neural-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: 14px;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.neural-card:hover {
-  border-color: rgba(56, 189, 248, 0.5);
-  box-shadow: 0 0 24px rgba(56, 189, 248, 0.15);
-}
-
-/* Holographic Cyber Glass */
-.cyber-glass {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
-  transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-.cyber-glass:hover {
-  border-color: rgba(56, 189, 248, 0.4);
-}
-
-/* Interactive Neural Radar Pill Tags */
-.neural-tag {
-  padding: 0.35rem 0.85rem;
-  border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.7rem;
-  font-family: 'JetBrains Mono', monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--ink);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  user-select: none;
-}
-
-.neural-tag:hover, .neural-tag.active {
-  background: var(--accent);
-  color: var(--bg);
-  border-color: var(--accent);
-  font-weight: 700;
-  box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
-}
-
-/* Node circle badge style */
-.node-circle-badge {
+  letter-spacing: 0.06em;
+  padding: 0.625rem 1.25rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
   background: var(--surface);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 50%;
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  color: var(--ink);
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.node-circle-badge:hover {
+.btn-command-secondary:hover {
   border-color: var(--accent);
-  transform: scale(1.05);
+  color: var(--accent);
+  background: var(--surface-secondary);
 }
 
-/* Radial Neural Background */
-.neural-bg-pattern {
-  background-image: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.06) 0%, transparent 70%);
-}
-
-/* Subtle Animated Cyber Grid Background */
-.cyber-grid-bg {
-  background-size: 40px 40px;
-  background-image: 
-    linear-gradient(to right, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
-}
-
-/* Radar sweep scanline animation */
+/* Radar Sweep Animation for Telemetry */
 @keyframes radar-sweep {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .animate-radar {
   animation: radar-sweep 4s linear infinite;
 }
 
-@keyframes pulse-ring {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-  50% {
-    transform: scale(1.15);
-    opacity: 0.3;
-  }
-  100% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-}
-
-.animate-pulse-ring {
-  animation: pulse-ring 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Shockwave expansion animation for cascade simulator */
-@keyframes shockwave-expand {
-  0% {
-    transform: scale(0.2);
-    opacity: 1;
-  }
-  80% {
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(2.8);
-    opacity: 0;
-  }
-}
-
-.animate-shockwave {
-  animation: shockwave-expand 2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
-}
-
-/* Custom sleek scrollbar */
+/* Sleek Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0A0A0C;
+  background: var(--bg);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 9999px;
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  background: var(--border-subtle);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #38BDF8;
+  background: var(--accent);
 }

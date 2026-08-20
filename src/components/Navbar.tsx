@@ -8,21 +8,26 @@ import {
   Volume2, 
   VolumeX, 
   Bot, 
-  Sparkles, 
-  Plus,
   LogIn,
   LogOut,
-  Zap,
   Sun,
   Moon,
   Home,
   Menu,
   X,
   ChevronDown,
-  User as UserIcon,
+  Terminal,
+  Activity,
   ShieldCheck,
-  Compass
+  Settings,
+  Mail,
+  FileText,
+  Scale,
+  Building2,
+  HelpCircle,
+  Radio
 } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface NavbarProps {
   viewMode: ViewMode;
@@ -36,6 +41,10 @@ interface NavbarProps {
   theme: "dark" | "light";
   onToggleTheme: () => void;
   onShowLanding?: () => void;
+  onOpenPrivacy?: () => void;
+  onOpenTerms?: () => void;
+  onOpenContact?: () => void;
+  onTest404?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -49,11 +58,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenProfile,
   theme,
   onToggleTheme,
-  onShowLanding
+  onShowLanding,
+  onOpenPrivacy,
+  onOpenTerms,
+  onOpenContact,
+  onTest404
 }) => {
   const [isMuted, setIsMuted] = useState(sound.isMuted);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const toggleSound = () => {
     sound.isMuted = !sound.isMuted;
@@ -61,285 +76,400 @@ export const Navbar: React.FC<NavbarProps> = ({
     if (!sound.isMuted) sound.playClick();
   };
 
-  // Close menu on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
     };
-    if (isMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isMenuOpen]);
-
-  const getViewDetails = (mode: ViewMode) => {
-    switch (mode) {
-      case "3D_SPACE":
-        return { label: "3D Knowledge Graph", desc: "Interactive concentric orbital space", icon: Network, color: "text-sky-500" };
-      case "2D_TOPOLOGY":
-        return { label: "2D Topological Map", desc: "Force-directed graph & supply vectors", icon: Layers, color: "text-cyan-500" };
-      case "RISK_MATRIX":
-        return { label: "Supplier Risk Matrix", desc: "Quadrant analysis & risk distribution", icon: Grid3X3, color: "text-indigo-500" };
-    }
-  };
-
-  const activeViewInfo = getViewDetails(viewMode);
-  const ActiveIcon = activeViewInfo.icon;
+  }, []);
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 dark:border-white/10 bg-white/90 dark:bg-[#0A0A0C]/90 backdrop-blur-xl transition-colors duration-300">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-        {/* Left: Brand Identity with Design Label */}
-        <div 
-          className="flex items-center gap-3 cursor-pointer select-none group" 
-          onClick={() => onShowLanding ? onShowLanding() : onSetViewMode("3D_SPACE")}
-        >
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 via-sky-600 to-indigo-600 p-0.5 shadow-lg shadow-sky-500/25 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-white dark:bg-[#0A0A0C] rounded-[10px] flex items-center justify-center">
-              <Network className="w-5 h-5 text-sky-500 dark:text-[#38BDF8] animate-pulse" />
+    <header className="sticky top-0 z-50 w-full bg-[#FFFFFF] dark:bg-[#0B0E14] border-b border-slate-200 dark:border-[#1C2433] transition-colors duration-200 font-mono">
+      {/* Terminal Command Bar Header Container */}
+      <div className="w-full px-3 sm:px-6 py-2.5 flex items-center justify-between gap-3 text-xs">
+        
+        {/* Left: Terminal Masthead & Live Telemetry Pill */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
+          <div 
+            onClick={() => onShowLanding ? onShowLanding() : onSetViewMode("3D_SPACE")}
+            className="flex items-center gap-2.5 cursor-pointer select-none group"
+          >
+            <div className="w-7 h-7 rounded border border-cyan-500/40 bg-cyan-500/10 flex items-center justify-center text-cyan-500 group-hover:border-cyan-400 transition-colors">
+              <Terminal className="w-4 h-4" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-display font-bold text-sm tracking-tight text-slate-900 dark:text-white leading-none">
+                TRUSTGRAPH<span className="text-cyan-700 dark:text-cyan-400">.AI</span>
+              </span>
+              <span className="text-[9px] text-slate-600 dark:text-slate-400 uppercase tracking-widest leading-tight mt-0.5">
+                CONTAGION DEFENSE OS
+              </span>
             </div>
           </div>
 
-          <div>
-            <div className="design-label text-sky-600 dark:text-sky-400 font-bold">TrustGraph AI</div>
-            <div className="flex items-center gap-2">
-              <span className="font-display font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-[#E2E8F0]">
-                SUPPLY CHAIN KNOWLEDGE GRAPH
-              </span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-sky-100 dark:bg-sky-950/60 border border-sky-300 dark:border-sky-400/40 text-sky-700 dark:text-sky-300">
-                LIVE
-              </span>
-            </div>
+          {/* Fixed Telemetry Status Chip */}
+          <div className="hidden md:flex items-center gap-2 px-2 py-1 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] text-[10px] text-slate-700 dark:text-slate-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+            <span>SYS: ONLINE</span>
+            <span className="text-slate-300 dark:text-slate-700">|</span>
+            <span className="text-amber-700 dark:text-amber-400 font-semibold">MSMED: SEC 15/16</span>
           </div>
         </div>
 
-        {/* Center: Top-Center Hamburger Navigation Menu */}
-        <div ref={menuRef} className="relative">
+        {/* Center: Command Mode Selector (Desktop) */}
+        <div className="hidden lg:flex items-center gap-1 p-1 rounded-md border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520]">
           <button
-            id="center-hamburger-menu-btn"
             onClick={() => {
               sound.playClick();
-              setIsMenuOpen(!isMenuOpen);
+              if (onShowLanding) onShowLanding();
             }}
-            className="px-3.5 py-2 rounded-2xl bg-slate-100/90 dark:bg-white/10 hover:bg-slate-200 dark:hover:bg-white/15 border border-slate-300 dark:border-white/15 backdrop-blur-md text-xs font-mono text-slate-800 dark:text-slate-100 flex items-center gap-2.5 shadow-sm transition-all cursor-pointer group"
+            className="px-3 py-1.5 rounded text-[11px] font-mono text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-300 transition-colors cursor-pointer"
           >
-            <div className="p-1 rounded-lg bg-sky-500/10 dark:bg-sky-400/20 text-sky-600 dark:text-cyan-300 group-hover:scale-110 transition-transform">
-              {isMenuOpen ? <X className="w-3.5 h-3.5" /> : <Menu className="w-3.5 h-3.5" />}
-            </div>
-            <div className="flex items-center gap-1.5">
-              <ActiveIcon className="w-3.5 h-3.5 text-sky-500 dark:text-cyan-400" />
-              <span className="font-semibold hidden sm:inline">{activeViewInfo.label}</span>
-              <span className="font-semibold sm:hidden">Views</span>
-            </div>
-            <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`} />
+            [00 // ARCHITECTURE]
+          </button>
+          
+          <button
+            onClick={() => {
+              sound.playClick();
+              onSetViewMode("3D_SPACE");
+            }}
+            className={`px-3 py-1.5 rounded text-[11px] font-mono transition-all cursor-pointer flex items-center gap-1.5 ${
+              viewMode === "3D_SPACE"
+                ? "bg-cyan-500 text-slate-950 font-bold shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-300"
+            }`}
+          >
+            <Network className="w-3 h-3" />
+            <span>01: 3D SPACE</span>
           </button>
 
-          {/* Centered Glassmorphic Dropdown Drawer */}
-          {isMenuOpen && (
-            <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-72 sm:w-80 rounded-2xl bg-white/95 dark:bg-[#0C0C10]/95 border border-slate-200 dark:border-white/15 shadow-2xl backdrop-blur-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-              <div className="px-3 py-2 border-b border-slate-100 dark:border-white/10 flex items-center justify-between text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                <span className="flex items-center gap-1.5">
-                  <Compass className="w-3 h-3 text-sky-500" />
-                  Knowledge Graph Navigation
-                </span>
-                <span className="text-sky-600 dark:text-cyan-400 font-bold">Fast Switch</span>
-              </div>
+          <button
+            onClick={() => {
+              sound.playClick();
+              onSetViewMode("2D_TOPOLOGY");
+            }}
+            className={`px-3 py-1.5 rounded text-[11px] font-mono transition-all cursor-pointer flex items-center gap-1.5 ${
+              viewMode === "2D_TOPOLOGY"
+                ? "bg-cyan-500 text-slate-950 font-bold shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-300"
+            }`}
+          >
+            <Layers className="w-3 h-3" />
+            <span>02: 2D TOPOLOGY</span>
+          </button>
 
-              <div className="mt-1.5 space-y-1">
-                {onShowLanding && (
-                  <button
-                    onClick={() => {
-                      sound.playClick();
-                      setIsMenuOpen(false);
-                      onShowLanding();
-                    }}
-                    className="w-full p-2.5 rounded-xl flex items-center gap-3 text-left hover:bg-slate-100 dark:hover:bg-white/10 transition-colors cursor-pointer text-slate-700 dark:text-slate-200 group"
-                  >
-                    <div className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 group-hover:bg-sky-500 group-hover:text-white transition-colors">
-                      <Home className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold font-display">Landing Page</div>
-                      <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Overview &amp; architectural pillars</div>
-                    </div>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => {
-                    sound.playClick();
-                    onSetViewMode("3D_SPACE");
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full p-2.5 rounded-xl flex items-center gap-3 text-left transition-colors cursor-pointer group ${
-                    viewMode === "3D_SPACE"
-                      ? "bg-sky-500/10 dark:bg-sky-400/20 text-sky-700 dark:text-cyan-300 border border-sky-500/30 dark:border-sky-400/40"
-                      : "hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200"
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl transition-colors ${
-                    viewMode === "3D_SPACE" ? "bg-sky-500 text-white" : "bg-slate-100 dark:bg-white/5 group-hover:bg-sky-500 group-hover:text-white"
-                  }`}>
-                    <Network className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-xs font-bold font-display flex items-center justify-between">
-                      <span>3D Knowledge Graph</span>
-                      {viewMode === "3D_SPACE" && <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-500 text-white">ACTIVE</span>}
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Orbital mechanics &amp; shockwaves</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    sound.playClick();
-                    onSetViewMode("2D_TOPOLOGY");
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full p-2.5 rounded-xl flex items-center gap-3 text-left transition-colors cursor-pointer group ${
-                    viewMode === "2D_TOPOLOGY"
-                      ? "bg-sky-500/10 dark:bg-sky-400/20 text-sky-700 dark:text-cyan-300 border border-sky-500/30 dark:border-sky-400/40"
-                      : "hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200"
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl transition-colors ${
-                    viewMode === "2D_TOPOLOGY" ? "bg-sky-500 text-white" : "bg-slate-100 dark:bg-white/5 group-hover:bg-sky-500 group-hover:text-white"
-                  }`}>
-                    <Layers className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-xs font-bold font-display flex items-center justify-between">
-                      <span>2D Topological Map</span>
-                      {viewMode === "2D_TOPOLOGY" && <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-500 text-white">ACTIVE</span>}
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Force-directed supply vector plane</div>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    sound.playClick();
-                    onSetViewMode("RISK_MATRIX");
-                    setIsMenuOpen(false);
-                  }}
-                  className={`w-full p-2.5 rounded-xl flex items-center gap-3 text-left transition-colors cursor-pointer group ${
-                    viewMode === "RISK_MATRIX"
-                      ? "bg-sky-500/10 dark:bg-sky-400/20 text-sky-700 dark:text-cyan-300 border border-sky-500/30 dark:border-sky-400/40"
-                      : "hover:bg-slate-100 dark:hover:bg-white/10 text-slate-700 dark:text-slate-200"
-                  }`}
-                >
-                  <div className={`p-2 rounded-xl transition-colors ${
-                    viewMode === "RISK_MATRIX" ? "bg-sky-500 text-white" : "bg-slate-100 dark:bg-white/5 group-hover:bg-sky-500 group-hover:text-white"
-                  }`}>
-                    <Grid3X3 className="w-4 h-4" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-xs font-bold font-display flex items-center justify-between">
-                      <span>Risk Matrix &amp; Quadrants</span>
-                      {viewMode === "RISK_MATRIX" && <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-sky-500 text-white">ACTIVE</span>}
-                    </div>
-                    <div className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Statistical risk scatter &amp; clusters</div>
-                  </div>
-                </button>
-              </div>
-            </div>
-          )}
+          <button
+            onClick={() => {
+              sound.playClick();
+              onSetViewMode("RISK_MATRIX");
+            }}
+            className={`px-3 py-1.5 rounded text-[11px] font-mono transition-all cursor-pointer flex items-center gap-1.5 ${
+              viewMode === "RISK_MATRIX"
+                ? "bg-cyan-500 text-slate-950 font-bold shadow-sm"
+                : "text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-300"
+            }`}
+          >
+            <Grid3X3 className="w-3 h-3" />
+            <span>03: RISK MATRIX</span>
+          </button>
         </div>
 
-        {/* Right: Actions, Theme, Sound & Operator Profile */}
-        <div className="flex items-center justify-end gap-2 sm:gap-3">
-          {/* Theme Toggle Button */}
+        {/* Right: Edge Command Actions */}
+        <div className="flex items-center gap-2">
+          {/* AI Copilot Trigger */}
           <button
-            id="navbar-theme-toggle-btn"
+            onClick={() => {
+              sound.playClick();
+              onOpenCopilot();
+            }}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded border border-cyan-600/40 bg-cyan-600/10 text-cyan-700 dark:text-cyan-300 hover:bg-cyan-600/20 text-xs font-bold transition-all cursor-pointer"
+            title="Open Gemini AI Forensic Copilot (⌘K)"
+          >
+            <Bot className="w-3.5 h-3.5" />
+            <span>COPILOT [⌘K]</span>
+          </button>
+
+          {/* Sound Mute Toggle */}
+          <button
+            onClick={toggleSound}
+            className="p-2 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors cursor-pointer"
+            title={isMuted ? "Unmute Audio FX" : "Mute Audio FX"}
+          >
+            {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-cyan-500" />}
+          </button>
+
+          {/* Theme Toggle */}
+          <button
             onClick={() => {
               sound.playClick();
               onToggleTheme();
             }}
-            className="p-2 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-100/80 dark:bg-white/5 text-slate-700 dark:text-slate-300 hover:text-amber-500 dark:hover:text-amber-400 transition-all text-xs cursor-pointer shadow-sm"
+            className="p-2 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] text-slate-600 dark:text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 transition-colors cursor-pointer"
             title={`Switch to ${theme === "dark" ? "Light" : "Dark"} Mode`}
           >
-            {theme === "dark" ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-700" />}
+            {theme === "dark" ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-700" />}
           </button>
 
-          {/* Audio Synthesizer Mute Toggle */}
-          <button
-            id="toggle-audio-btn"
-            onClick={toggleSound}
-            className={`p-2 rounded-xl border transition-all text-xs cursor-pointer shadow-sm ${
-              isMuted
-                ? "bg-slate-100/80 dark:bg-white/5 border-slate-200 dark:border-white/10 text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                : "bg-sky-500/10 border-sky-500/40 text-sky-600 dark:text-[#38BDF8]"
-            }`}
-            title={isMuted ? "Unmute Audio Synthesizer" : "Mute Audio Synthesizer"}
-          >
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-sky-500 animate-pulse" />}
-          </button>
-
-          {/* User Profile & Session Controls */}
+          {/* Operator Profile / Session State */}
           {user ? (
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-white/10">
-              {/* Profile Avatar Trigger Button */}
+            <div ref={userMenuRef} className="relative flex items-center gap-2">
               <button
-                id="user-profile-trigger-btn"
                 onClick={() => {
                   sound.playClick();
-                  onOpenProfile?.();
+                  setIsUserMenuOpen(!isUserMenuOpen);
                 }}
-                className="flex items-center gap-2 p-1 sm:px-2.5 sm:py-1 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-all cursor-pointer group"
-                title="Edit Operator Profile Settings"
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] hover:border-cyan-500/40 text-slate-700 dark:text-slate-300 text-xs font-mono transition-all cursor-pointer"
               >
-                <div className="relative w-7 h-7 rounded-lg bg-gradient-to-br from-sky-500 to-indigo-600 p-0.5 shadow-sm">
-                  {user.photoURL ? (
-                    <img
-                      src={user.photoURL}
-                      alt={user.name}
-                      referrerPolicy="no-referrer"
-                      className="w-full h-full object-cover rounded-[6px]"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-white dark:bg-[#0A0A0C] rounded-[6px] flex items-center justify-center text-sky-500 font-bold text-xs font-mono">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <div className="hidden sm:block text-left">
-                  <div className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1 font-mono leading-none group-hover:text-sky-500 transition-colors">
-                    {user.name}
-                  </div>
-                  <div className="text-[9px] text-sky-600 dark:text-cyan-400 font-mono line-clamp-1 mt-0.5">
-                    Profile Settings
-                  </div>
-                </div>
+                <div className="w-2 h-2 rounded-full bg-cyan-400" />
+                <span className="hidden sm:inline font-semibold">{user.name.split(" ")[0]}</span>
+                <ChevronDown className={`w-3 h-3 text-slate-400 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
               </button>
 
+              {/* Direct Desktop Logout */}
               <button
-                id="logout-btn"
-                onClick={() => { sound.playClick(); onLogout(); }}
-                className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-rose-50 dark:hover:bg-rose-950/40 border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors cursor-pointer"
-                title="Sign Out to Landing Page"
+                onClick={() => {
+                  sound.playClick();
+                  onLogout();
+                }}
+                className="hidden xl:flex items-center gap-1 px-2.5 py-1.5 rounded border border-rose-500/30 bg-rose-500/10 text-rose-700 dark:text-rose-400 hover:bg-rose-500/20 text-xs font-bold transition-colors cursor-pointer"
+                title="Sign out of command session"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="w-3 h-3" />
+                <span>EXIT</span>
               </button>
+
+              {/* User Dropdown */}
+              <AnimatePresence>
+                {isUserMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    className="absolute right-0 top-full mt-1.5 w-60 rounded border border-slate-200 dark:border-[#1F293D] bg-white dark:bg-[#0D1017] shadow-xl p-1.5 z-50 text-xs"
+                  >
+                    <div className="p-2 border-b border-slate-100 dark:border-[#1C2433] space-y-0.5">
+                      <div className="font-bold text-slate-900 dark:text-white truncate">{user.name}</div>
+                      <div className="text-[10px] text-slate-600 dark:text-slate-400 truncate">{user.email}</div>
+                      <div className="text-[9px] text-cyan-700 dark:text-cyan-400 font-bold">{user.role}</div>
+                    </div>
+
+                    <div className="mt-1 space-y-0.5">
+                      <button
+                        onClick={() => {
+                          sound.playClick();
+                          setIsUserMenuOpen(false);
+                          onOpenProfile?.();
+                        }}
+                        className="w-full px-2.5 py-2 rounded text-left hover:bg-slate-100 dark:hover:bg-[#161B26] text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                      >
+                        <Settings className="w-3.5 h-3.5 text-cyan-500" />
+                        <span>Operator Settings</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sound.playClick();
+                          setIsUserMenuOpen(false);
+                          onOpenContact?.();
+                        }}
+                        className="w-full px-2.5 py-2 rounded text-left hover:bg-slate-100 dark:hover:bg-[#161B26] text-slate-700 dark:text-slate-300 flex items-center gap-2"
+                      >
+                        <Building2 className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>Contact HQ</span>
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          sound.playClick();
+                          setIsUserMenuOpen(false);
+                          onLogout();
+                        }}
+                        className="w-full px-2.5 py-2 rounded text-left bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 dark:text-rose-400 flex items-center gap-2 font-bold border border-rose-500/20"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>Terminate Session [Logout]</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <button
-              id="login-modal-btn"
-              onClick={() => { sound.playClick(); onLoginClick(); }}
-              className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-sky-500/20 dark:hover:bg-sky-500/30 text-white dark:text-sky-300 border border-slate-800 dark:border-sky-500/40 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-all shadow-sm"
+              onClick={() => {
+                sound.playClick();
+                onLoginClick();
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded border border-cyan-500 bg-cyan-500 text-slate-950 font-bold text-xs hover:bg-cyan-400 transition-colors cursor-pointer"
             >
-              <LogIn className="w-3.5 h-3.5 text-sky-400" />
-              <span>Login</span>
+              <LogIn className="w-3.5 h-3.5" />
+              <span>AUTH // LOGIN</span>
             </button>
           )}
+
+          {/* Mobile Menu Trigger */}
+          <button
+            onClick={() => {
+              sound.playClick();
+              setIsMenuOpen(true);
+            }}
+            className="lg:hidden p-2 rounded border border-slate-200 dark:border-[#1F293D] bg-slate-50 dark:bg-[#101520] text-slate-700 dark:text-slate-300 cursor-pointer"
+          >
+            <Menu className="w-4 h-4" />
+          </button>
         </div>
       </div>
+
+      {/* Mobile Drawer */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <div className="lg:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsMenuOpen(false)}
+              className="fixed inset-0 bg-black/70 backdrop-blur-xs z-[60]"
+            />
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "tween", duration: 0.2 }}
+              className="fixed right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-[#0A0C12] border-l border-slate-200 dark:border-[#1C2433] z-[70] shadow-2xl flex flex-col p-4 font-mono text-xs overflow-y-auto"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-[#1C2433]">
+                <div className="flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-cyan-500" />
+                  <span className="font-display font-bold text-slate-900 dark:text-white">COMMAND CONSOLE</span>
+                </div>
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-1 rounded text-slate-400 hover:text-slate-200"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <div className="mt-4 space-y-4 flex-1">
+                <div>
+                  <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-2">Command Modes</div>
+                  <div className="space-y-1.5">
+                    {[
+                      { id: "landing", label: "[00 // ARCHITECTURE]", icon: Home, action: onShowLanding },
+                      { id: "3D_SPACE", label: "[01 // 3D KNOWLEDGE GRAPH]", icon: Network, action: () => onSetViewMode("3D_SPACE"), active: viewMode === "3D_SPACE" },
+                      { id: "2D_TOPOLOGY", label: "[02 // 2D TOPOLOGY]", icon: Layers, action: () => onSetViewMode("2D_TOPOLOGY"), active: viewMode === "2D_TOPOLOGY" },
+                      { id: "RISK_MATRIX", label: "[03 // RISK MATRIX]", icon: Grid3X3, action: () => onSetViewMode("RISK_MATRIX"), active: viewMode === "RISK_MATRIX" },
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          sound.playClick();
+                          item.action?.();
+                          setIsMenuOpen(false);
+                        }}
+                        className={`w-full p-2.5 rounded border text-left flex items-center justify-between transition-colors ${
+                          item.active
+                            ? "border-cyan-500 bg-cyan-500/10 text-cyan-500 font-bold"
+                            : "border-slate-200 dark:border-[#1C2433] bg-slate-50 dark:bg-[#10141E] text-slate-700 dark:text-slate-300"
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <item.icon className="w-3.5 h-3.5" />
+                          {item.label}
+                        </span>
+                        {item.active && <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-2">AI Copilot & Tools</div>
+                  <button
+                    onClick={() => {
+                      sound.playClick();
+                      setIsMenuOpen(false);
+                      onOpenCopilot();
+                    }}
+                    className="w-full p-2.5 rounded border border-cyan-500/40 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 font-bold text-left flex items-center gap-2"
+                  >
+                    <Bot className="w-4 h-4" />
+                    <span>Launch Gemini AI Copilot</span>
+                  </button>
+                </div>
+
+                {/* Operator Actions */}
+                <div>
+                  <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-2">Operator Session</div>
+                  {user ? (
+                    <div className="space-y-2 p-3 rounded border border-slate-200 dark:border-[#1C2433] bg-slate-50 dark:bg-[#10141E]">
+                      <div className="font-bold text-slate-900 dark:text-white truncate">{user.name}</div>
+                      <div className="text-[10px] text-cyan-600 dark:text-cyan-400">{user.role}</div>
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-200 dark:border-[#1C2433]">
+                        <button
+                          onClick={() => {
+                            sound.playClick();
+                            setIsMenuOpen(false);
+                            onOpenProfile?.();
+                          }}
+                          className="py-1.5 rounded border border-slate-300 dark:border-[#222B3D] text-center"
+                        >
+                          Settings
+                        </button>
+                        <button
+                          onClick={() => {
+                            sound.playClick();
+                            setIsMenuOpen(false);
+                            onLogout();
+                          }}
+                          className="py-1.5 rounded border border-rose-500/30 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-center font-bold"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        sound.playClick();
+                        setIsMenuOpen(false);
+                        onLoginClick();
+                      }}
+                      className="w-full p-2.5 rounded border border-cyan-500 bg-cyan-500 text-slate-950 font-bold text-center"
+                    >
+                      Authenticate Operator
+                    </button>
+                  )}
+                </div>
+
+                <div>
+                  <div className="text-[10px] text-slate-400 uppercase tracking-widest mb-2">Statutory & Legal</div>
+                  <div className="space-y-1 text-slate-500">
+                    <button onClick={() => { sound.playClick(); setIsMenuOpen(false); onOpenPrivacy?.(); }} className="block py-1 hover:text-cyan-400">
+                      • Privacy (DPDP Act 2023)
+                    </button>
+                    <button onClick={() => { sound.playClick(); setIsMenuOpen(false); onOpenTerms?.(); }} className="block py-1 hover:text-cyan-400">
+                      • Terms of Service
+                    </button>
+                    <button onClick={() => { sound.playClick(); setIsMenuOpen(false); onOpenContact?.(); }} className="block py-1 hover:text-cyan-400">
+                      • Contact HQ (Hyderabad)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </header>
   );
 };
-
-

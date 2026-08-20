@@ -490,16 +490,16 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
       <canvas ref={canvasRef} className="w-full h-full cursor-grab active:cursor-grabbing block" />
 
       {/* Cyber HUD Overlay Top Left: Legend & Threat Radar */}
-      <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 pointer-events-none">
-        <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-lg bg-[#0A0A0C]/80 backdrop-blur-md border border-sky-400/30 text-xs font-mono text-[#38BDF8] pointer-events-auto">
-          <span className="w-2 h-2 rounded-full bg-[#38BDF8] animate-ping" />
-          <span>3D SPATIAL KNOWLEDGE GRAPH</span>
+      <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 pointer-events-none max-w-[calc(100%-8rem)]">
+        <div className="flex items-center gap-2 px-2 sm:px-3.5 py-1 sm:py-1.5 rounded-lg bg-[#0A0A0C]/80 backdrop-blur-md border border-sky-400/30 text-[9px] sm:text-xs font-mono text-[#38BDF8] pointer-events-auto whitespace-nowrap overflow-hidden">
+          <span className="w-1.5 sm:w-2 h-1.5 sm:h-2 rounded-full bg-[#38BDF8] animate-ping" />
+          <span className="truncate">3D GRAPH</span>
           <span className="text-slate-500">|</span>
-          <span className="text-slate-300">{networkData.nodes.length} NODES</span>
+          <span className="text-slate-300">{networkData.nodes.length} N</span>
         </div>
 
         {/* Tier Hierarchy Indicators */}
-        <div className="flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#0A0A0C]/80 backdrop-blur-sm border border-white/10 text-[11px] font-mono text-slate-300 pointer-events-auto">
+        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#0A0A0C]/80 backdrop-blur-sm border border-white/10 text-[11px] font-mono text-slate-300 pointer-events-auto">
           <span className="inline-block w-2.5 h-2.5 rounded-full bg-sky-400 mr-1" /> Core Hub
           <span className="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 ml-2 mr-1" /> Tier-1
           <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-400 ml-2 mr-1" /> Tier-2
@@ -508,19 +508,21 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
       </div>
 
       {/* Cyber HUD Top Right: Controls & Filters */}
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-2 pointer-events-auto">
+      <div className="absolute top-4 right-4 z-20 flex flex-wrap justify-end gap-1.5 sm:gap-2 pointer-events-auto max-w-[calc(100%-8rem)]">
         {/* Tier Filter */}
         <div className="relative">
           <select
             id="filter-tier-select"
+            aria-label="Filter by supply chain tier"
+            title="Filter by supply chain tier"
             value={filterTier}
             onChange={(e) => { sound.playClick(); setFilterTier(e.target.value); }}
-            className="px-2.5 py-1.5 rounded-lg bg-[#0A0A0C]/85 backdrop-blur-md border border-white/10 text-xs text-slate-200 focus:outline-none focus:border-[#38BDF8] font-mono cursor-pointer"
+            className="px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-[#0A0A0C]/85 backdrop-blur-md border border-white/10 text-[10px] sm:text-xs text-slate-200 focus:outline-none focus:border-[#38BDF8] font-mono cursor-pointer"
           >
             <option value="All">All Tiers</option>
-            <option value="Tier-1">Tier-1 Direct</option>
-            <option value="Tier-2">Tier-2 Sub-assembly</option>
-            <option value="Tier-3">Tier-3 Raw Materials</option>
+            <option value="Tier-1">Tier-1</option>
+            <option value="Tier-2">Tier-2</option>
+            <option value="Tier-3">Tier-3</option>
           </select>
         </div>
 
@@ -528,14 +530,16 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
         <div>
           <select
             id="filter-risk-select"
+            aria-label="Filter by risk level"
+            title="Filter by risk level"
             value={filterRisk}
             onChange={(e) => { sound.playClick(); setFilterRisk(e.target.value); }}
-            className="px-2.5 py-1.5 rounded-lg bg-slate-900/85 backdrop-blur-md border border-slate-700 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono cursor-pointer"
+            className="px-1.5 sm:px-2.5 py-1 sm:py-1.5 rounded-lg bg-slate-900/85 backdrop-blur-md border border-slate-700 text-[10px] sm:text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono cursor-pointer"
           >
             <option value="All">All Risks</option>
-            <option value="Low">Low / Very Low</option>
-            <option value="Medium">Medium Risk</option>
-            <option value="High">High / Critical</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
           </select>
         </div>
 
@@ -543,10 +547,10 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
         <button
           id="help-guide-btn"
           onClick={() => { sound.playClick(); setShowHelper(!showHelper); }}
-          className="p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs"
+          className="p-1.5 sm:p-2 rounded-lg bg-slate-900/80 hover:bg-slate-800 border border-slate-700 text-slate-300 text-xs"
           title="3D Navigation Controls"
         >
-          <HelpCircle className="w-3.5 h-3.5" />
+          <HelpCircle className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
         </button>
       </div>
 
@@ -586,17 +590,17 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
 
       {/* Floating 3D Hover Tooltip HUD */}
       {hoveredNode && (
-        <div className="absolute bottom-12 left-4 z-20 pointer-events-none p-3.5 rounded-xl bg-[#0A0A0B]/95 backdrop-blur-xl border border-[#22D3EE]/50 shadow-2xl w-80 animate-in fade-in slide-in-from-bottom-2">
+        <div className="absolute bottom-12 left-4 z-20 pointer-events-none p-3.5 rounded-xl bg-[#0A0A0B]/95 backdrop-blur-xl border border-[#22D3EE]/50 shadow-2xl w-[calc(100vw-2rem)] max-w-80 animate-in fade-in slide-in-from-bottom-2">
           <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 truncate">
               <div
-                className="w-3 h-3 rounded-full"
+                className="w-3 h-3 rounded-full flex-shrink-0"
                 style={{ backgroundColor: hoveredNode.color }}
               />
-              <span className="font-bold text-sm text-white tracking-wide">{hoveredNode.label}</span>
+              <span className="font-bold text-sm text-white tracking-wide truncate">{hoveredNode.label}</span>
             </div>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-[#22D3EE]">
-              {hoveredNode.score}/100 TRUST
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-white/5 border border-white/10 text-[#22D3EE] flex-shrink-0">
+              {hoveredNode.score}/100
             </span>
           </div>
 
@@ -629,20 +633,20 @@ export const Network3DScene: React.FC<Network3DSceneProps> = ({
 
       {/* Active Shockwave Simulation Banner Overlay */}
       {cascadeResult && (
-        <div className="absolute bottom-6 right-6 z-20 max-w-md p-4 rounded-xl bg-rose-950/85 backdrop-blur-xl border border-rose-500/60 shadow-2xl animate-pulse">
-          <div className="flex items-center gap-2 text-rose-300 font-mono text-xs font-bold uppercase tracking-wider">
-            <ShieldAlert className="w-4 h-4 text-rose-400 animate-bounce" />
-            <span>Active Contagion Shockwave Simulation</span>
+        <div className="absolute bottom-6 right-6 left-6 sm:left-auto z-20 sm:max-w-md p-4 rounded-xl bg-rose-950/85 backdrop-blur-xl border border-rose-500/60 shadow-2xl animate-pulse">
+          <div className="flex items-center gap-2 text-rose-300 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+            <ShieldAlert className="w-4 h-4 text-rose-400 animate-bounce flex-shrink-0" />
+            <span className="truncate">Contagion Simulation Active</span>
           </div>
-          <div className="mt-1 text-sm font-semibold text-white">
-            Default Origin: {cascadeResult.originSupplier.name}
+          <div className="mt-1 text-xs sm:text-sm font-semibold text-white truncate">
+            Origin: {cascadeResult.originSupplier.name}
           </div>
-          <p className="mt-1 text-xs text-rose-200 line-clamp-2">
+          <p className="mt-1 text-[10px] sm:text-xs text-rose-200 line-clamp-2">
             {cascadeResult.cascadeNarrative}
           </p>
-          <div className="mt-2 flex items-center justify-between text-xs font-mono text-rose-300">
-            <span>Direct Impact: {cascadeResult.directImpactedNodeIds.length} Nodes</span>
-            <span className="font-bold text-rose-100">Exposure: {cascadeResult.monetaryExposureINR}</span>
+          <div className="mt-2 flex items-center justify-between text-[10px] sm:text-xs font-mono text-rose-300">
+            <span>Impact: {cascadeResult.directImpactedNodeIds.length} Nodes</span>
+            <span className="font-bold text-rose-100">{cascadeResult.monetaryExposureINR}</span>
           </div>
         </div>
       )}

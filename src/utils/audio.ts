@@ -123,6 +123,32 @@ class SoundEngine {
       osc.stop(now + 0.46);
     } catch (e) {}
   }
+
+  // Error alert tone
+  public playError() {
+    if (this.isMuted) return;
+    this.init();
+    if (!this.ctx) return;
+
+    try {
+      const now = this.ctx.currentTime;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.setValueAtTime(150, now + 0.1);
+
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.26);
+    } catch (e) {}
+  }
 }
 
 export const sound = new SoundEngine();

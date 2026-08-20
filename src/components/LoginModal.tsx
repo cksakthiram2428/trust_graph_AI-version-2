@@ -99,6 +99,9 @@ export const LoginModal: React.FC<LoginModalProps> = ({
   return (
     <div
       id="login-modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-label="TrustGraph Command Login"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 dark:bg-[#0A0A0C]/85 backdrop-blur-md animate-in fade-in"
     >
       <div className="relative w-full max-w-md rounded-3xl neural-card border border-slate-200 dark:border-white/10 shadow-2xl p-6 sm:p-8 bg-white dark:bg-[#0A0A0C] text-slate-900 dark:text-slate-100">
@@ -120,6 +123,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({
 
           <button
             onClick={() => { sound.playClick(); onClose(); }}
+            aria-label="Close login modal"
+            title="Close login modal"
             className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -132,6 +137,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
             type="button"
             onClick={() => handleOAuthSignIn("google")}
             disabled={loading !== null}
+            aria-label="Sign in with Google OAuth"
             className="w-full py-2.5 px-4 rounded-xl bg-white dark:bg-white/10 hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-white border border-slate-300 dark:border-white/20 font-bold font-mono text-xs flex items-center justify-center gap-3 shadow-sm transition-all cursor-pointer disabled:opacity-50"
           >
             <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -148,6 +154,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               type="button"
               onClick={() => handleOAuthSignIn("microsoft")}
               disabled={loading !== null}
+              aria-label="Sign in with Microsoft"
               className="py-2.5 px-3 rounded-xl bg-white dark:bg-white/10 hover:bg-slate-50 dark:hover:bg-white/15 text-slate-800 dark:text-white border border-slate-300 dark:border-white/20 font-bold font-mono text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
             >
               <svg className="w-3.5 h-3.5" viewBox="0 0 23 23">
@@ -163,6 +170,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
               type="button"
               onClick={() => handleOAuthSignIn("github")}
               disabled={loading !== null}
+              aria-label="Sign in with GitHub"
               className="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-black/60 dark:hover:bg-black text-white border border-slate-800 dark:border-white/20 font-bold font-mono text-xs flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
             >
               <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -188,12 +196,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-mono text-slate-600 dark:text-slate-300 uppercase mb-1">
+            <label htmlFor="operator-email-input" className="block text-xs font-mono text-slate-600 dark:text-slate-300 uppercase mb-1">
               Operator Email
             </label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
+                id="operator-email-input"
+                aria-label="Operator Email"
                 type="email"
                 required
                 value={email}
@@ -204,12 +214,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-mono text-slate-600 dark:text-slate-300 uppercase mb-1">
+            <label htmlFor="operator-password-input" className="block text-xs font-mono text-slate-600 dark:text-slate-300 uppercase mb-1">
               Secret Key / Password
             </label>
             <div className="relative">
               <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
+                id="operator-password-input"
+                aria-label="Secret Key or Password"
                 type="password"
                 required
                 value={password}
@@ -227,6 +239,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           <button
             type="submit"
             disabled={loading !== null}
+            aria-label="Authenticate Operator Session"
             className="w-full py-3 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 font-mono font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20 transition-all cursor-pointer disabled:opacity-50"
           >
             <span>{loading === "password" ? "Authenticating Operator..." : "Authenticate Session"}</span>

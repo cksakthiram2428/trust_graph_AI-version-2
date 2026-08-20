@@ -2,9 +2,13 @@
   "name": "react-example",
   "private": true,
   "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cksakthiram2428/trust_graph_AI-version-2.git"
+  },
   "type": "module",
   "scripts": {
-    "dev": "vite & tsx server.ts",
+    "dev": "tsx server.ts",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
@@ -17,11 +21,13 @@
     "@types/canvas-confetti": "^1.9.0",
     "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "^5.0.4",
+    "axios": "^1.19.0",
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "firebase": "^12.17.1",
+    "firebase-admin": "^14.2.0",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "react": "^19.0.1",

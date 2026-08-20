@@ -95,6 +95,9 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
   return (
     <div
       id="csv-ingestion-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Ingest Real-World MSME Datasets"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in"
     >
       <div className="relative w-full max-w-2xl rounded-3xl bg-white dark:bg-[#0E0E12] border border-slate-200 dark:border-cyan-500/30 shadow-2xl p-6 sm:p-8 max-h-[90vh] flex flex-col text-slate-900 dark:text-slate-100 transition-colors">
@@ -121,6 +124,8 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
 
           <button
             onClick={() => { sound.playClick(); onClose(); }}
+            aria-label="Close MSME ingestion modal"
+            title="Close MSME ingestion modal"
             className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -145,6 +150,7 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => fileInputRef.current?.click()}
+                aria-label="Choose CSV File to upload"
                 className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 font-mono text-xs flex items-center gap-2 cursor-pointer transition-colors"
               >
                 <UploadCloud className="w-3.5 h-3.5 text-sky-600 dark:text-[#38BDF8]" />
@@ -155,11 +161,13 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
                 ref={fileInputRef}
                 onChange={handleFileUpload}
                 accept=".csv,text/csv"
+                aria-label="Upload CSV File"
                 className="hidden"
               />
 
               <button
                 onClick={handleLoadSample}
+                aria-label="Load official data.gov.in sample dataset"
                 className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 font-mono text-xs cursor-pointer transition-colors"
               >
                 Load data.gov.in Sample
@@ -173,10 +181,12 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
 
           {/* Textarea for CSV */}
           <div className="space-y-1">
-            <label className="block text-[11px] font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold">
+            <label htmlFor="csv-content-textarea" className="block text-[11px] font-mono text-slate-700 dark:text-slate-300 uppercase font-semibold">
               CSV Content or Raw Input:
             </label>
             <textarea
+              id="csv-content-textarea"
+              aria-label="CSV Content or raw data input"
               rows={7}
               value={csvText}
               onChange={(e) => setCsvText(e.target.value)}
@@ -234,6 +244,7 @@ export const CsvIngestionModal: React.FC<CsvIngestionModalProps> = ({
           <button
             disabled={!csvText.trim() || isUploading}
             onClick={handleExecuteImport}
+            aria-label="Validate and Ingest Dataset"
             className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-slate-950 font-bold font-mono text-xs flex items-center gap-2 cursor-pointer disabled:opacity-40 shadow-sm"
           >
             {isUploading ? (

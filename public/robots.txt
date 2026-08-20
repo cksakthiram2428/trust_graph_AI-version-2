@@ -1,0 +1,6 @@
+# robots.txt for TrustGraph AI
+User-agent: *
+Allow: /
+
+# Host & Sitemap
+Sitemap: https://ais-dev-tkb5zitclgbpqv3recq2lx-855254863227.asia-southeast1.run.app/sitemap.xml

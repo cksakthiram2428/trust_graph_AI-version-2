@@ -317,6 +317,9 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
   return (
     <div
       id="ai-copilot-drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-label="TrustGraph AI Copilot Intelligence Panel"
       className="fixed inset-y-0 right-0 z-50 w-full max-w-xl bg-white/85 dark:bg-[#07070B]/85 backdrop-blur-2xl border-l border-slate-200/80 dark:border-white/10 shadow-2xl flex flex-col p-6 animate-in slide-in-from-right duration-300 font-sans text-slate-900 dark:text-slate-100"
     >
       {/* Header */}
@@ -341,6 +344,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
         <button
           id="close-copilot-drawer-btn"
           onClick={() => { sound.playClick(); onClose(); }}
+          aria-label="Close AI Copilot Panel"
+          title="Close AI Copilot Panel"
           className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors cursor-pointer"
         >
           <X className="w-5 h-5" />
@@ -351,8 +356,15 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
       <div className="shrink-0 py-3 border-b border-slate-200/80 dark:border-white/10 space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           {/* Model Choice Tabs */}
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[11px] font-mono">
+          <div 
+            role="tablist"
+            aria-label="Gemini model selection"
+            className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[11px] font-mono"
+          >
             <button
+              role="tab"
+              aria-selected={activeModel === "gemini-3.5-flash" && !isHighThinkingMode}
+              aria-label="Select Gemini 3.5 Flash general model"
               onClick={() => { sound.playClick(); setActiveModel("gemini-3.5-flash"); setIsHighThinkingMode(false); }}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 activeModel === "gemini-3.5-flash" && !isHighThinkingMode
@@ -363,6 +375,9 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
               3.5 Flash (General)
             </button>
             <button
+              role="tab"
+              aria-selected={activeModel === "gemini-3.1-pro-preview" && !isHighThinkingMode}
+              aria-label="Select Gemini 3.1 Pro complex reasoning model"
               onClick={() => { sound.playClick(); setActiveModel("gemini-3.1-pro-preview"); setIsHighThinkingMode(false); }}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 activeModel === "gemini-3.1-pro-preview" && !isHighThinkingMode
@@ -373,6 +388,9 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
               3.1 Pro (Complex)
             </button>
             <button
+              role="tab"
+              aria-selected={activeModel === "gemini-3.1-flash-lite" && !isHighThinkingMode}
+              aria-label="Select Gemini 3.1 Flash Lite fast model"
               onClick={() => { sound.playClick(); setActiveModel("gemini-3.1-flash-lite"); setIsHighThinkingMode(false); }}
               className={`px-2.5 py-1 rounded-lg transition-all cursor-pointer ${
                 activeModel === "gemini-3.1-flash-lite" && !isHighThinkingMode
@@ -386,6 +404,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
 
           {/* High Thinking Toggle */}
           <button
+            aria-pressed={isHighThinkingMode}
+            aria-label="Toggle High Thinking Deep Reasoning Mode"
             onClick={() => {
               sound.playClick();
               setIsHighThinkingMode(!isHighThinkingMode);
@@ -406,6 +426,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
         <div className="flex flex-wrap items-center gap-2 pt-1">
           {/* Google Search Grounding */}
           <button
+            aria-pressed={useSearchGrounding}
+            aria-label="Toggle Google Search Real-Time Grounding"
             onClick={() => { sound.playClick(); setUseSearchGrounding(!useSearchGrounding); }}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono border transition-all cursor-pointer ${
               useSearchGrounding
@@ -419,6 +441,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
 
           {/* Google Maps Grounding */}
           <button
+            aria-pressed={useMapsGrounding}
+            aria-label="Toggle Google Maps Geospatial Location Grounding"
             onClick={() => { sound.playClick(); setUseMapsGrounding(!useMapsGrounding); }}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono border transition-all cursor-pointer ${
               useMapsGrounding
@@ -432,6 +456,7 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
 
           {/* Document Scanner Trigger */}
           <button
+            aria-label="Upload document image for forensic scanning"
             onClick={() => { sound.playClick(); fileInputRef.current?.click(); }}
             className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-amber-600 dark:text-amber-300 hover:border-amber-400/40 transition-all cursor-pointer ml-auto"
           >
@@ -443,11 +468,14 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
             ref={fileInputRef}
             onChange={handleFileUpload}
             accept="image/*"
+            aria-label="Upload document image file"
             className="hidden"
           />
 
           {/* Live Voice API Button */}
           <button
+            aria-pressed={isListening}
+            aria-label={isListening ? "Stop listening to live voice" : "Start Live Voice API assistant"}
             onClick={handleToggleVoice}
             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-mono border transition-all cursor-pointer ${
               isListening
@@ -556,6 +584,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
       {/* Input Box */}
       <div className="mt-3 shrink-0 relative">
         <textarea
+          id="copilot-input-prompt"
+          aria-label="Enter prompt for AI Risk Copilot"
           rows={2}
           value={inputPrompt}
           onChange={(e) => setInputPrompt(e.target.value)}
@@ -578,6 +608,8 @@ export const AICopilotDrawer: React.FC<AICopilotDrawerProps> = ({
         />
         <button
           id="send-copilot-msg-btn"
+          aria-label="Send message to AI Copilot"
+          title="Send message to AI Copilot"
           disabled={!inputPrompt.trim() || isGenerating}
           onClick={() => handleSendMessage()}
           className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-400 hover:to-cyan-400 text-slate-950 disabled:opacity-30 cursor-pointer transition-all shadow-md shadow-sky-500/20"
